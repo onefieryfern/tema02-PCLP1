@@ -1,0 +1,26 @@
+# Homework-specific stuff
+
+*.pdf
+*.zip
+
+check_capybara_remastered*/
+
+# Checker stuff
+
+.venv/
+
+# IDE files
+
+.idea/
+
+# macOS stuff
+
+.DS_Store
+
+## binaries
+
+battleships
+
+# objects
+
+*.o
