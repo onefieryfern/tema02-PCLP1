@@ -2,7 +2,9 @@
 # andrei.florea1311@stud.acs.pub.ro
 
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -Werror
+CFLAGS=-std=c99 -lc -Wall -Wextra -Werror
+
+all: build
 
 build: battleships
 
