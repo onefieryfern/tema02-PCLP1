@@ -11,4 +11,12 @@ typedef struct {
 
 typedef enum { vertical, horizontal } direction_t;
 
+typedef enum {
+	albacore = 1,
+	laffey = 2,
+	belfast = 3,
+	yamato = 4,
+	shinano = 5
+} ship_type_t;
+
 #endif

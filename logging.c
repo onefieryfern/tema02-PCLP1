@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_hit_successful(int player_num, int ship_type, coords_t coords)
+void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
 {
 	char *ship_type_str = get_ship_type_str(ship_type);
 
@@ -35,7 +35,8 @@ void log_already_hit(coords_t coords, int player_num)
 		   coords.x, coords.y, player_num);
 }
 
-void log_destroy(int player_num, int ship_type, coords_t start, coords_t end)
+void log_destroy(int player_num, ship_type_t ship_type,
+				 coords_t start, coords_t end)
 {
 	char *ship_type_str = get_ship_type_str(ship_type);
 
@@ -52,7 +53,8 @@ void log_destroy(int player_num, int ship_type, coords_t start, coords_t end)
 	free(ship_type_str);
 }
 
-void log_cannot_place(int ship_type, direction_t direction, coords_t coords)
+void log_cannot_place(ship_type_t ship_type, direction_t direction,
+					  coords_t coords)
 {
 	char *ship_type_str = get_ship_type_str(ship_type);
 
@@ -90,27 +92,25 @@ void log_player_won(int player_num)
 	printf("Jucatorul %d a castigat.\n", player_num);
 }
 
-char *get_ship_type_str(int ship_type)
+char *get_ship_type_str(ship_type_t ship_type)
 {
 	char *ship_type_str = NULL;
 
 	switch (ship_type) {
-	case 1:
+	case albacore:
 		ship_type_str = dup_str("Albacore");
 		break;
-	case 2:
+	case laffey:
 		ship_type_str = dup_str("Laffey");
 		break;
-	case 3:
+	case belfast:
 		ship_type_str = dup_str("Belfast");
 		break;
-	case 4:
+	case yamato:
 		ship_type_str = dup_str("Yamato");
 		break;
-	case 5:
+	case shinano:
 		ship_type_str = dup_str("Shinano");
-		break;
-	default:
 		break;
 	}
 
