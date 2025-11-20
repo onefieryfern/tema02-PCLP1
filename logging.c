@@ -16,11 +16,78 @@ void log_hit_successful(int player_num, int ship_type, coords_t coords)
 		return;
 	}
 
-	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu)\n",
+	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu)\n\n",
 		   player_num, ship_type_str, coords.x, coords.y);
 
 	// Cleanup
 	free(ship_type_str);
+}
+
+void log_hit_miss(int player_num, coords_t coords)
+{
+	printf("Jucatorul %d a ratat o lovitura la coordonatele (%llu, %llu).\n",
+		   player_num, coords.x, coords.y);
+}
+
+void log_already_hit(coords_t coords, int player_num)
+{
+	printf("Coordonatele (%llu, %llu) au fost deja atacate de jucatorul %d\n",
+		   coords.x, coords.y, player_num);
+}
+
+void log_destroy(int player_num, int ship_type, coords_t start, coords_t end)
+{
+	char *ship_type_str = get_ship_type_str(ship_type);
+
+	if (!ship_type_str) {
+		fprintf(stderr, "get_ship_type_str() failed\n");
+		return;
+	}
+
+	printf("Jucatorul %d a distrus o nava %s plasata intre coordonatele "
+		   "(%llu, %llu) si (%llu, %llu).\n", player_num, ship_type_str,
+		   start.x, start.y, end.x, end.y);
+
+	// Cleanup
+	free(ship_type_str);
+}
+
+void log_cannot_place(int ship_type, direction_t direction, coords_t coords)
+{
+	char *ship_type_str = get_ship_type_str(ship_type);
+
+	if (!ship_type_str) {
+		fprintf(stderr, "get_ship_type_str() failed\n");
+		return;
+	}
+
+	char *direction_str = NULL;
+
+	switch (direction) {
+	case vertical:
+		direction_str = dup_str("vertical");
+		break;
+	case horizontal:
+		direction_str = dup_str("horizontal");
+		break;
+	}
+
+	if (!direction_str) {
+		fprintf(stderr, "dup_str() failed\n");
+		return;
+	}
+
+	printf("Nava %s nu poate fi amplasata %s la coordonatele (%llu, %llu).\n",
+		   ship_type_str, direction_str, coords.x, coords.y);
+
+	// Cleanup
+	free(ship_type_str);
+	free(direction_str);
+}
+
+void log_player_won(int player_num)
+{
+	printf("Jucatorul %d a castigat.\n", player_num);
 }
 
 char *get_ship_type_str(int ship_type)
