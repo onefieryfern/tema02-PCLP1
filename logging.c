@@ -114,5 +114,10 @@ char *get_ship_type_str(int ship_type)
 		break;
 	}
 
+	if (!ship_type_str) {
+		fprintf(stderr, "dup_str() failed\n");
+		return NULL;
+	}
+
 	return ship_type_str;
 }
