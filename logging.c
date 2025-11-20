@@ -3,7 +3,7 @@
 
 #include "logging.h"
 #include "memory.h"
-#include "structs.h"
+#include "types.h"
 #include <stdio.h>
 #include <stdlib.h>
 

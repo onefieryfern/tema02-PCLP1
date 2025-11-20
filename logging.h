@@ -4,7 +4,7 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include "structs.h"
+#include "types.h"
 
 void log_hit_successful(int player_num, int ship_type, coords_t coords);
 
