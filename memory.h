@@ -4,6 +4,7 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#include "types.h"
 #include <stdlib.h>
 
 // char *alloc_str(size_t size);
@@ -11,5 +12,7 @@ char *dup_str(const char *str);
 
 int **alloc_int_matrix(size_t rows, size_t cols);
 void free_int_matrix(int **arr);
+
+ship_t *alloc_ship_vector(size_t size);
 
 #endif

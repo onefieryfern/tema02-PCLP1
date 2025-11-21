@@ -2,6 +2,7 @@
 // andrei.florea1311@stud.acs.upb.ro
 
 #include "memory.h"
+#include "types.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,4 +68,16 @@ void free_int_matrix(int **arr)
 
 	free(mem_zone);
 	free(arr);
+}
+
+ship_t *alloc_ship_vector(size_t size)
+{
+	ship_t *ships = (ship_t *)malloc(size * sizeof(ship_t));
+
+	if (!ships) {
+		fprintf(stderr, "malloc() failed\n");
+		return NULL;
+	}
+
+	return ships;
 }
