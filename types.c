@@ -93,7 +93,8 @@ int get_ship_end_coords(coords_t *end_coords, coords_t start_coords,
 	unsigned short ship_len = (unsigned short)ship_type;
 
 	if (direction == vertical) {
-		if (start_coords.y < ship_len - 1) {
+		// TODO: Prettify this comparison
+		if (start_coords.y < (unsigned short)(ship_len - 1)) {
 			return -1;
 		}
 
