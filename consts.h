@@ -4,6 +4,6 @@
 #ifndef CONSTS_H
 #define CONSTS_H
 
-#define NUM_SHIPS 5
+#define NUM_SHIP_TYPES 5
 
 #endif

@@ -13,7 +13,7 @@ int main(void)
 	unsigned long long rows, cols;
 	scanf("%llu %llu", &rows, &cols);
 
-	unsigned long long num_ships_of_type[NUM_SHIPS + 1];
+	unsigned long long num_ships_of_type[NUM_SHIP_TYPES + 1];
 	num_ships_of_type[albacore] = (rows * cols) / 20;
 	num_ships_of_type[laffey] = (rows * cols) / 30;
 	num_ships_of_type[belfast] = (rows * cols) / 40;
@@ -21,7 +21,7 @@ int main(void)
 	num_ships_of_type[shinano] = (rows * cols) / 70;
 
 	unsigned long long num_ships = 0;
-	for (int i = 1; i <= NUM_SHIPS; ++i) {
+	for (int i = 1; i <= NUM_SHIP_TYPES; ++i) {
 		num_ships += num_ships_of_type[i];
 	}
 
