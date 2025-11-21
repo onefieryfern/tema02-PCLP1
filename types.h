@@ -25,4 +25,7 @@ typedef struct {
 	coords_t end_coords;
 } ship_t;
 
+int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);
+int cast_to_direction_t(direction_t *direction, char direction_code);
+
 #endif
