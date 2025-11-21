@@ -33,7 +33,7 @@ char *dup_str(const char *str)
 	return new_str;
 }
 
-int **alloc_array(size_t rows, size_t cols)
+int **alloc_int_matrix(size_t rows, size_t cols)
 {
 	int **arr = (int **)malloc(rows * sizeof(int));
 
@@ -61,7 +61,7 @@ int **alloc_array(size_t rows, size_t cols)
 	return arr;
 }
 
-void free_array(int **arr)
+void free_int_matrix(int **arr)
 {
 	int *mem_zone = arr[0];
 
