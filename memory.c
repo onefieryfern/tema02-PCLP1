@@ -64,6 +64,10 @@ int **alloc_int_matrix(size_t rows, size_t cols)
 
 void free_int_matrix(int **arr)
 {
+	if (!arr) {
+		return;
+	}
+
 	int *mem_zone = arr[0];
 
 	free(mem_zone);
