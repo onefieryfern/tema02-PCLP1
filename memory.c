@@ -32,3 +32,39 @@ char *dup_str(const char *str)
 	strcpy(new_str, str);
 	return new_str;
 }
+
+int **alloc_array(size_t rows, size_t cols)
+{
+	int **arr = (int **)malloc(rows * sizeof(int));
+
+	if (!arr) {
+		fprintf(stderr, "malloc() failed\n");
+		return NULL;
+	}
+
+	int *mem_zone = (int *)malloc(rows * cols * sizeof(int));
+
+	if (!mem_zone) {
+		fprintf(stderr, "malloc() failed\n");
+
+		free(arr);
+		return NULL;
+	}
+
+	for (size_t i = 0; i < rows; ++i) {
+		arr[i] = mem_zone;
+
+		mem_zone += cols;
+	}
+	mem_zone = NULL;
+
+	return arr;
+}
+
+void free_array(int **arr)
+{
+	int *mem_zone = arr[0];
+
+	free(mem_zone);
+	free(arr);
+}
