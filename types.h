@@ -19,4 +19,10 @@ typedef enum {
 	shinano = 5
 } ship_type_t;
 
+typedef struct {
+	ship_type_t type;
+	coords_t start_coords;
+	coords_t end_coords;
+} ship_t;
+
 #endif
