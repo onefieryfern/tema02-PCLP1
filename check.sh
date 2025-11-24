@@ -1,6 +1,6 @@
 #!/bin/bash
 
-checker_dir='./check_capybara_remastered'
+checker_dir='./PCLP2025-Tema2-2025.11.24'
 
 if [ ! -d "$checker_dir" ]; then
 	exit -1

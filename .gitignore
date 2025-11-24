@@ -3,7 +3,8 @@
 *.pdf
 *.zip
 
-check_capybara_remastered*/
+check_capybara_remastered/
+PCLP2025-Tema2-*/
 pclp-cs-*/
 
 # Checker stuff
