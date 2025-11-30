@@ -9,7 +9,7 @@
 #include "types.h"
 #include <stdio.h>
 
-int play_one_game()
+int play_one_game(void)
 {
 	unsigned long long rows, cols;
 	scanf("%llu %llu", &rows, &cols);
