@@ -1,6 +1,6 @@
 #!/bin/bash
 
-checker_dir='./pclp-cs-21.11.2025'
+checker_dir='./PCLP2025-Tema2-2025.11.24/cs'
 
 if [ ! -d "$checker_dir" ]; then
 	exit -1
