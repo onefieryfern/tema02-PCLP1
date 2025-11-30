@@ -31,19 +31,17 @@ int main(void)
 		num_ships += num_ships_of_type[i];
 	}
 
-	int **player1_grid = alloc_int_matrix(rows, cols);
-	int **player2_grid = alloc_int_matrix(rows, cols);
+	// Grid initialisation
+	int **player1_grid = NULL;
+	int **player2_grid = NULL;
+
+	get_new_grids(NULL, NULL, &player1_grid, &player2_grid, rows, cols);
 
 	if (!player1_grid || !player2_grid) {
-		fprintf(stderr, "alloc_int_matrix() failed\n");
+		fprintf(stderr, "get_new_grids() failed\n");
 
-		free_int_matrix(player1_grid);
-		free_int_matrix(player2_grid);
 		return -1;
 	}
-
-	zero_out_matrix(player1_grid, rows, cols);
-	zero_out_matrix(player2_grid, rows, cols);
 
 	ship_t *player1_ships = alloc_ship_vector(num_ships);
 	ship_t *player2_ships = alloc_ship_vector(num_ships);
