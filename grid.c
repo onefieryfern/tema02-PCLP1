@@ -38,10 +38,12 @@ int is_ship_placeable(int **grid, size_t rows, size_t cols, ship_t ship)
 		coords_t current_coords = ship_coords[i];
 
 		if (grid[current_coords.row][current_coords.col] != 0) {
+			free(ship_coords);
 			return 0;
 		}
 	}
 
+	free(ship_coords);
 	return 1;
 }
 
@@ -64,6 +66,7 @@ int add_ship_to_grid(int **grid, size_t rows, size_t cols, ship_t ship)
 		grid[current_coords.row][current_coords.col] = ship.len;
 	}
 
+	free(ship_coords);
 	return 1;
 }
 
