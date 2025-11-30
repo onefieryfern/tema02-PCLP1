@@ -7,4 +7,9 @@
 #define NUM_SHIP_TYPES 5
 #define MAX_SHIP_LEN 5
 
+#define HIT_SUCCESS 1
+#define HIT_MISS 0
+#define HIT_DESTROY 2
+#define HIT_REPEAT 3
+
 #endif

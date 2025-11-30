@@ -97,6 +97,62 @@ int play_one_game(void)
 	printf("\n");
 	print_int_array(player2_grid, rows, cols);
 
+	// Play one game
+	current_player = 1;
+
+	size_t num_ships_left_player1 = num_player1_ships;
+	size_t num_ships_left_player2 = num_player2_ships;
+
+	while (1) {
+		coords_t grid_hit_coords;
+		scanf("%llu %llu", &grid_hit_coords.row, &grid_hit_coords.col);
+
+		coords_t matrix_hit_coords = get_matrix_coords(grid_hit_coords);
+
+		int **current_attacked_grid = NULL;
+		ship_t *currently_attacked_ships = NULL;
+		size_t *num_ships_currently_attacked = NULL;
+
+		if (current_player == 1) {
+			current_attacked_grid = player2_grid;
+			currently_attacked_ships = player2_ships;
+			num_ships_currently_attacked = &num_ships_left_player2;
+		} else { // current_player == 2
+			current_attacked_grid = player1_grid;
+			currently_attacked_ships = player1_ships;
+			num_ships_currently_attacked = &num_ships_left_player1;
+		}
+
+		// Try to hit ship
+		ship_t hit_ship;
+
+		int hit_result = try_hitting(current_attacked_grid, matrix_hit_coords, currently_attacked_ships, num_ships_currently_attacked, &hit_ship);
+
+		switch (hit_result) {
+		case HIT_MISS:
+			log_hit_miss(current_player, grid_hit_coords);
+			break;
+		case HIT_SUCCESS:
+			log_hit_successful(current_player, hit_ship.len, grid_hit_coords);
+			break;
+		case HIT_DESTROY:
+			// TODO: Refactor log_destroy to avoid this mess
+			coords_t ship_start = get_grid_coords(hit_ship.start);
+			coords_t ship_end = get_grid_coords(hit_ship.end);
+			log_destroy(current_player, hit_ship.len, ship_start, ship_end);
+			break;
+		case HIT_REPEAT:
+			log_already_hit(grid_hit_coords, current_player);
+		}
+
+		if (num_ships_left_player1 == 0 || num_ships_left_player2 == 0) {
+			log_player_won(current_player);
+			break;
+		}
+
+		current_player = get_other_player(current_player);
+	}
+
 	// Free used memory
 	free_int_matrix(player1_grid);
 	free_int_matrix(player2_grid);
@@ -117,4 +173,105 @@ int get_other_player(int player)
 	default:
 		return -1;
 	}
+}
+
+int try_hitting(int **grid, coords_t hit_coords, ship_t *ships, size_t *num_ships, ship_t *hit_ship)
+{
+	int *space_to_hit = &grid[hit_coords.row][hit_coords.col];
+
+	if (*space_to_hit == -1) {
+		return HIT_REPEAT;
+	}
+
+	// Mark space as hit
+	*space_to_hit = -1;
+
+	size_t hit_ship_index = 0;
+
+	if (find_hit_ship_index(ships, *num_ships, hit_coords, &hit_ship_index) == 1
+		&& *space_to_hit != 0) {
+		*hit_ship = ships[hit_ship_index];
+
+		// Rule: if ship head is hit, the whole ship is destroyed
+		int was_ship_head_hit = 0;
+		if (are_coords_equal(hit_coords, hit_ship->start)) {
+			was_ship_head_hit = 1;
+
+			destroy_ship(grid, *hit_ship);
+		}
+
+		// Check if ship was destroyed as a result of the hit,
+		// and remove it from the hit player's ship list
+		if (was_ship_head_hit || is_ship_destroyed(grid, *hit_ship)) {
+			remove_ship_from_list(ships, num_ships, hit_ship_index);
+
+			return HIT_DESTROY;
+		}
+
+		return HIT_SUCCESS;
+		}
+
+	return HIT_MISS;
+}
+
+int find_hit_ship_index(ship_t *ships, size_t num_ships, coords_t hit_coords, size_t *index)
+{
+	for (size_t i = 0; i < num_ships; ++i) {
+		ship_t current_ship = ships[i];
+
+		coords_t ship_coords[MAX_SHIP_LEN];
+		get_ordered_ship_coords(ship_coords, current_ship);
+
+		for (size_t j = 0; j < current_ship.len; ++j) {
+			if (are_coords_equal(ship_coords[j], hit_coords)) {
+				*index = i;
+
+				return 1;
+			}
+		}
+	}
+
+	// Ship not found
+	return 0;
+}
+
+int is_ship_destroyed(int **grid, ship_t ship)
+{
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, ship);
+
+	for (size_t i = 0; i < ship.len; ++i) {
+		coords_t current_coords = ship_coords[i];
+
+		if (grid[current_coords.row][current_coords.col] != 0) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+void remove_ship_from_list(ship_t *ships, size_t *num_ships, size_t index)
+{
+	for (size_t i = index; i < *num_ships - 1; ++i) {
+		ships[i] = ships[i + 1];
+	}
+
+	(*num_ships)--;
+}
+
+int destroy_ship(int **grid, ship_t ship)
+{
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, ship);
+
+	for (size_t i = 0; i < ship.len; ++i) {
+		coords_t current_coords = ship_coords[i];
+
+		if (grid[current_coords.row][current_coords.col] != -1) {
+			grid[current_coords.row][current_coords.col] = 0;
+		}
+	}
+
+	return 1;
 }

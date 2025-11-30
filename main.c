@@ -9,7 +9,9 @@ int main(void)
 	unsigned long long num_games;
 	scanf("%llu", &num_games);
 
-	play_one_game();
+	for (unsigned long long i = 1; i <= num_games; ++i) {
+		play_one_game();
+	}
 
 	return 0;
 }
