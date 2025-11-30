@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code)
 {
@@ -136,4 +137,38 @@ coords_t get_grid_coords(coords_t coords)
 	coords.col++;
 
 	return coords;
+}
+
+coords_t *get_ordered_ship_coords(ship_t ship)
+{
+	coords_t *coords_list = malloc(ship.len * sizeof(coords_t));
+
+	if (!coords_list) {
+		fprintf(stderr, "malloc() failed\n");
+		return NULL;
+	}
+
+	size_t list_len = 0;
+
+	if (ship.dir == vertical) {
+		for (size_t i = ship.start.row; i >= ship.end.row; --i) {
+			coords_list[list_len].row = i;
+			coords_list[list_len].col = ship.start.col;
+
+			list_len++;
+
+			if (i == 0) {
+				break;
+			}
+		}
+	} else { // ship.dir == horizontal
+		for (size_t i = ship.start.col; i <= ship.end.col; ++i) {
+			coords_list[list_len].row = ship.start.row;
+			coords_list[list_len].col = i;
+
+			list_len++;
+		}
+	}
+
+	return coords_list;
 }
