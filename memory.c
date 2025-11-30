@@ -74,6 +74,15 @@ void free_int_matrix(int **arr)
 	free(arr);
 }
 
+void zero_out_matrix(int **arr, size_t rows, size_t cols)
+{
+	for (size_t i = 0; i < rows; ++i) {
+		for (size_t j = 0; j < cols; ++j) {
+			arr[i][j] = 0;
+		}
+	}
+}
+
 ship_t *alloc_ship_vector(size_t size)
 {
 	ship_t *ships = (ship_t *)malloc(size * sizeof(ship_t));
