@@ -36,7 +36,7 @@ char *dup_str(const char *str)
 
 int **alloc_int_matrix(size_t rows, size_t cols)
 {
-	int **arr = (int **)malloc(rows * sizeof(int));
+	int **arr = (int **)malloc(rows * sizeof(int *));
 
 	if (!arr) {
 		fprintf(stderr, "malloc() failed\n");
