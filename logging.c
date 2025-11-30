@@ -16,7 +16,7 @@ void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
 		return;
 	}
 
-	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu)\n\n",
+	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu)\n",
 		   player_num, ship_type_str, coords.row, coords.col);
 
 	// Cleanup
