@@ -27,23 +27,17 @@ int is_ship_placeable(int **grid, size_t rows, size_t cols, ship_t ship)
 		return 0;
 	}
 
-	coords_t *ship_coords = get_ordered_ship_coords(ship);
-
-	if (!ship_coords) {
-		fprintf(stderr, "get_ordered_ship_coords() failed\n");
-		return -1;
-	}
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, ship);
 
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
 		if (grid[current_coords.row][current_coords.col] != 0) {
-			free(ship_coords);
 			return 0;
 		}
 	}
 
-	free(ship_coords);
 	return 1;
 }
 
@@ -53,12 +47,8 @@ int add_ship_to_grid(int **grid, size_t rows, size_t cols, ship_t ship)
 		return 0;
 	}
 
-	coords_t *ship_coords = get_ordered_ship_coords(ship);
-
-	if (!ship_coords) {
-		fprintf(stderr, "get_ordered_ship_coords() failed\n");
-		return -1;
-	}
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, ship);
 
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
@@ -66,7 +56,6 @@ int add_ship_to_grid(int **grid, size_t rows, size_t cols, ship_t ship)
 		grid[current_coords.row][current_coords.col] = ship.len;
 	}
 
-	free(ship_coords);
 	return 1;
 }
 

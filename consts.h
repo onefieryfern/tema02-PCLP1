@@ -5,5 +5,6 @@
 #define CONSTS_H
 
 #define NUM_SHIP_TYPES 5
+#define MAX_SHIP_LEN 5
 
 #endif

@@ -2,6 +2,7 @@
 // andrei.florea1311@stud.acs.upb.ro
 
 #include "types.h"
+#include "consts.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -144,15 +145,8 @@ int are_coords_equal(coords_t a, coords_t b)
 	return a.row == b.row && a.col == b.col;
 }
 
-coords_t *get_ordered_ship_coords(ship_t ship)
+void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship)
 {
-	coords_t *coords_list = malloc(ship.len * sizeof(coords_t));
-
-	if (!coords_list) {
-		fprintf(stderr, "malloc() failed\n");
-		return NULL;
-	}
-
 	size_t list_len = 0;
 
 	if (ship.dir == vertical) {
@@ -174,6 +168,4 @@ coords_t *get_ordered_ship_coords(ship_t ship)
 			list_len++;
 		}
 	}
-
-	return coords_list;
 }

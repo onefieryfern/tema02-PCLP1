@@ -4,6 +4,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include "consts.h"
+
 typedef struct {
 	unsigned long long row;
 	unsigned long long col;
@@ -38,6 +40,6 @@ coords_t get_grid_coords(coords_t coords);
 
 int are_coords_equal(coords_t a, coords_t b);
 
-coords_t *get_ordered_ship_coords(ship_t ship);
+void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship);
 
 #endif
