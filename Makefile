@@ -8,7 +8,7 @@ all: build
 
 build: battleships
 
-battleships: battleships.c logging.c memory.c types.c
+battleships: battleships.c grid.c logging.c memory.c types.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
