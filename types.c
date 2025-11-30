@@ -109,3 +109,19 @@ int get_ship_end_coords(coords_t *end_coords, coords_t start_coords,
 
 	return 1;
 }
+
+coords_t get_matrix_coords(coords_t coords)
+{
+	coords.row--;
+	coords.col--;
+
+	return coords;
+}
+
+coords_t get_grid_coords(coords_t coords)
+{
+	coords.row++;
+	coords.col++;
+
+	return coords;
+}
