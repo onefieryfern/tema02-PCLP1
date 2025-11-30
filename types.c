@@ -139,6 +139,11 @@ coords_t get_grid_coords(coords_t coords)
 	return coords;
 }
 
+int are_coords_equal(coords_t a, coords_t b)
+{
+	return a.row == b.row && a.col == b.col;
+}
+
 coords_t *get_ordered_ship_coords(ship_t ship)
 {
 	coords_t *coords_list = malloc(ship.len * sizeof(coords_t));

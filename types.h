@@ -36,6 +36,8 @@ int calc_and_set_ship_end_coords(ship_t *ship);
 coords_t get_matrix_coords(coords_t coords);
 coords_t get_grid_coords(coords_t coords);
 
+int are_coords_equal(coords_t a, coords_t b);
+
 coords_t *get_ordered_ship_coords(ship_t ship);
 
 #endif
