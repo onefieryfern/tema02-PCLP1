@@ -70,7 +70,7 @@ void log_cannot_place(ship_type_t ship_type, direction_t direction,
 		direction_str = dup_str("vertical");
 		break;
 	case horizontal:
-		direction_str = dup_str("horizontal");
+		direction_str = dup_str("orizontal");
 		break;
 	}
 
