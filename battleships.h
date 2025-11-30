@@ -4,4 +4,7 @@
 #ifndef BATTLESHIPS_H
 #define BATTLESHIPS_H
 
+int play_one_game();
+int get_other_player(int player);
+
 #endif
