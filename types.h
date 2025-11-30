@@ -20,17 +20,19 @@ typedef enum {
 } ship_type_t;
 
 typedef struct {
-	ship_type_t type;
-	coords_t start_coords;
-	coords_t end_coords;
+	unsigned short len;
+	direction_t dir;
+
+	coords_t start;
+	coords_t end;
 } ship_t;
 
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);
 int cast_to_direction_t(direction_t *direction, char direction_code);
 
 int read_ship(ship_t *ship);
-int get_ship_end_coords(coords_t *end_coords, coords_t start_coords,
-						direction_t direction, ship_type_t ship_type);
+int calc_and_set_ship_end_coords(ship_t *ship);
+
 coords_t get_matrix_coords(coords_t coords);
 coords_t get_grid_coords(coords_t coords);
 

@@ -52,59 +52,71 @@ int read_ship(ship_t *ship)
 	coords_t start_coords;
 
 	// Read from stdin
-	scanf("%c %c %llu %llu", &ship_type_code, &direction_code,
-		  &start_coords.x, &start_coords.y);
+	/*
+	scanf(" %c %c %llu %llu", &ship_type_code, &direction_code,
+		  &start_coords.row, &start_coords.col);
+	*/
 
-	// The grid is indexed from (0, 0), but the read coordinates
-	// are indexed from (1, 1)
-	start_coords.x--;
-	start_coords.y--;
+	scanf(" %c", &ship_type_code);
+	scanf(" %c", &direction_code);
+	scanf("%llu %llu", &start_coords.row, &start_coords.col);
 
-	ship->start_coords = start_coords;
-
-	// Set ship type
+	// Set ship len
 	ship_type_t ship_type;
 	if (!cast_to_ship_type_t(&ship_type, ship_type_code)) {
 		return 0;
 	}
 
-	ship->type = ship_type;
+	ship->len = (unsigned short)ship_type;
 
-	// Calculate end coordinates
+	// Set ship direction
 	direction_t direction;
 	if (!cast_to_direction_t(&direction, direction_code)) {
 		return 0;
 	}
 
-	coords_t end_coords;
-	if (get_ship_end_coords(&end_coords, start_coords, direction, ship_type)
-		== -1) {
+	ship->dir = direction;
+
+	// The grid is indexed from (0, 0), but the read coordinates
+	// are indexed from (1, 1)
+	start_coords.row--;
+	start_coords.col--;
+
+	ship->start = start_coords;
+
+	// Set end coordinates
+	if (calc_and_set_ship_end_coords(ship) == -1) {
 		return -1;
 	}
-
-	ship->end_coords = end_coords;
 
 	return 1;
 }
 
-int get_ship_end_coords(coords_t *end_coords, coords_t start_coords,
-						direction_t direction, ship_type_t ship_type)
+int calc_and_set_ship_end_coords(ship_t *ship)
 {
-	unsigned short ship_len = (unsigned short)ship_type;
+	if (ship->dir == vertical) {
+		size_t max_vertical_len = ship->start.row + 1;
 
-	if (direction == vertical) {
-		// TODO: Prettify this comparison
-		if (start_coords.y < (unsigned short)(ship_len - 1)) {
+		if (ship->len > max_vertical_len) {
 			return -1;
 		}
 
+		/*
+		// TODO: Prettify this comparison
+		if (ship->start.col < (unsigned short)(ship->len - 1)) {
+			return -1;
+		}
+		*/
+
 		// Vertical ships' start is at their bottom,
 		// thus their end is at their top
-		end_coords->y = start_coords.y - (ship_len - 1);
-	} else {
+		ship->end.row = ship->start.row - (ship->len - 1);
+		ship->end.col = ship->start.col;
+	} else { // ship->dir == horizontal
 		// Horizontal ships' start is at their left,
 		// thus their end is at their right
-		end_coords->x = start_coords.x + (ship_len - 1);
+		ship->end.row = ship->start.row;
+		ship->end.col = ship->start.col + (ship->len - 1);
 	}
 
 	return 1;
