@@ -16,7 +16,7 @@ void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
 		return;
 	}
 
-	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu)\n",
+	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu).\n",
 		   player_num, ship_type_str, coords.row, coords.col);
 
 	// Cleanup
@@ -31,7 +31,7 @@ void log_hit_miss(int player_num, coords_t coords)
 
 void log_already_hit(coords_t coords, int player_num)
 {
-	printf("Coordonatele (%llu, %llu) au fost deja atacate de jucatorul %d\n",
+	printf("Coordonatele (%llu, %llu) au fost deja atacate de jucatorul %d.\n",
 		   coords.row, coords.col, player_num);
 }
 
