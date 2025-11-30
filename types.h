@@ -5,8 +5,8 @@
 #define TYPES_H
 
 typedef struct {
-	unsigned long long x;
-	unsigned long long y;
+	unsigned long long row;
+	unsigned long long col;
 } coords_t;
 
 typedef enum { vertical, horizontal } direction_t;

@@ -17,7 +17,7 @@ void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
 	}
 
 	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu)\n\n",
-		   player_num, ship_type_str, coords.x, coords.y);
+		   player_num, ship_type_str, coords.row, coords.col);
 
 	// Cleanup
 	free(ship_type_str);
@@ -26,13 +26,13 @@ void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
 void log_hit_miss(int player_num, coords_t coords)
 {
 	printf("Jucatorul %d a ratat o lovitura la coordonatele (%llu, %llu).\n",
-		   player_num, coords.x, coords.y);
+		   player_num, coords.row, coords.col);
 }
 
 void log_already_hit(coords_t coords, int player_num)
 {
 	printf("Coordonatele (%llu, %llu) au fost deja atacate de jucatorul %d\n",
-		   coords.x, coords.y, player_num);
+		   coords.row, coords.col, player_num);
 }
 
 void log_destroy(int player_num, ship_type_t ship_type,
@@ -47,7 +47,7 @@ void log_destroy(int player_num, ship_type_t ship_type,
 
 	printf("Jucatorul %d a distrus o nava %s plasata intre coordonatele "
 		   "(%llu, %llu) si (%llu, %llu).\n", player_num, ship_type_str,
-		   start.x, start.y, end.x, end.y);
+		   start.row, start.col, end.row, end.col);
 
 	// Cleanup
 	free(ship_type_str);
@@ -80,7 +80,7 @@ void log_cannot_place(ship_type_t ship_type, direction_t direction,
 	}
 
 	printf("Nava %s nu poate fi amplasata %s la coordonatele (%llu, %llu).\n",
-		   ship_type_str, direction_str, coords.x, coords.y);
+		   ship_type_str, direction_str, coords.row, coords.col);
 
 	// Cleanup
 	free(ship_type_str);
