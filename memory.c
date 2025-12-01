@@ -94,3 +94,53 @@ ship_t *alloc_ship_vector(size_t size)
 
 	return ships;
 }
+
+Complex_grid **alloc_complex_grid(size_t rows, size_t cols)
+{
+	Complex_grid **arr = (Complex_grid **)malloc(rows * sizeof(Complex_grid *));
+
+	if (!arr) {
+		fprintf(stderr, "malloc() failed\n");
+		return NULL;
+	}
+
+	Complex_grid *mem_zone = (Complex_grid *)malloc(rows * cols * sizeof(Complex_grid));
+
+	if (!mem_zone) {
+		fprintf(stderr, "malloc() failed\n");
+
+		free(arr);
+		return NULL;
+	}
+
+	for (size_t i = 0; i < rows; ++i) {
+		arr[i] = mem_zone;
+
+		mem_zone += cols;
+	}
+	mem_zone = NULL;
+
+	return arr;
+}
+
+void free_complex_grid(Complex_grid **arr)
+{
+	if (!arr) {
+		return;
+	}
+
+	Complex_grid *mem_zone = arr[0];
+
+	free(mem_zone);
+	free(arr);
+}
+
+void zero_out_complex_grid(Complex_grid **arr, size_t rows, size_t cols)
+{
+	for (size_t i = 0; i < rows; ++i) {
+		for (size_t j = 0; j < cols; ++j) {
+			arr[i][j].space = 0;
+			arr[i][j].ship = NULL;
+		}
+	}
+}

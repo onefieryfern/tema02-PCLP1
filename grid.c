@@ -21,7 +21,7 @@ int is_ship_in_grid(size_t rows, size_t cols, ship_t ship)
 	return 1;
 }
 
-int is_ship_placeable(int **grid, size_t rows, size_t cols, ship_t ship)
+int is_ship_placeable(Complex_grid **grid, size_t rows, size_t cols, ship_t ship)
 {
 	if (!is_ship_in_grid(rows, cols, ship)) {
 		return 0;
@@ -33,7 +33,7 @@ int is_ship_placeable(int **grid, size_t rows, size_t cols, ship_t ship)
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		if (grid[current_coords.row][current_coords.col] != 0) {
+		if (grid[current_coords.row][current_coords.col].space != 0) {
 			return 0;
 		}
 	}
@@ -41,29 +41,30 @@ int is_ship_placeable(int **grid, size_t rows, size_t cols, ship_t ship)
 	return 1;
 }
 
-int add_ship_to_grid(int **grid, size_t rows, size_t cols, ship_t ship)
+int add_ship_to_grid(Complex_grid **grid, size_t rows, size_t cols, ship_t *ship)
 {
-	if (!is_ship_placeable(grid, rows, cols, ship)) {
+	if (!is_ship_placeable(grid, rows, cols, *ship)) {
 		return 0;
 	}
 
 	coords_t ship_coords[MAX_SHIP_LEN];
-	get_ordered_ship_coords(ship_coords, ship);
+	get_ordered_ship_coords(ship_coords, *ship);
 
-	for (size_t i = 0; i < ship.len; ++i) {
+	for (size_t i = 0; i < ship->len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		grid[current_coords.row][current_coords.col] = ship.len;
+		grid[current_coords.row][current_coords.col].space = ship->len;
+		grid[current_coords.row][current_coords.col].ship = ship;
 	}
 
 	return 1;
 }
 
-void print_int_array(int **arr, size_t rows, size_t cols)
+void print_int_array(Complex_grid **arr, size_t rows, size_t cols)
 {
 	for (size_t i = 0; i < rows; ++i) {
 		for (size_t j = 0; j < cols; ++j) {
-			printf("%d", arr[i][j]);
+			printf("%d", arr[i][j].space);
 
 			// Print spaces after each element, but not after the last one
 			if (j < cols - 1) {
@@ -76,36 +77,36 @@ void print_int_array(int **arr, size_t rows, size_t cols)
 	}
 }
 
-int **get_new_grid(int **old_grid, size_t new_rows, size_t new_cols)
+Complex_grid **get_new_grid(Complex_grid **old_grid, size_t new_rows, size_t new_cols)
 {
-	free_int_matrix(old_grid);
+	free_complex_grid(old_grid);
 	old_grid = NULL;
 
-	int **new_grid = alloc_int_matrix(new_rows, new_cols);
+	Complex_grid **new_grid = alloc_complex_grid(new_rows, new_cols);
 
 	if (!new_grid) {
-		fprintf(stderr, "alloc_int_matrix() failed\n");
+		fprintf(stderr, "alloc_complex_grid() failed\n");
 
 		return NULL;
 	}
 
-	zero_out_matrix(new_grid, new_rows, new_cols);
+	zero_out_complex_grid(new_grid, new_rows, new_cols);
 
 	return new_grid;
 }
 
-void get_new_grids(int **old_player1_grid, int **old_player2_grid,
-				   int ***new_player1_grid, int ***new_player2_grid,
+void get_new_grids(Complex_grid **old_player1_grid, Complex_grid **old_player2_grid,
+				   Complex_grid ***new_player1_grid, Complex_grid ***new_player2_grid,
 				   size_t new_rows, size_t new_cols)
 {
 	*new_player1_grid = get_new_grid(old_player1_grid, new_rows, new_cols);
 	*new_player2_grid = get_new_grid(old_player2_grid, new_rows, new_cols);
 
 	if (!*new_player1_grid || !*new_player2_grid) {
-		fprintf(stderr, "alloc_int_matrix() failed\n");
+		fprintf(stderr, "get_new_grid() failed\n");
 
-		free_int_matrix(*new_player1_grid);
-		free_int_matrix(*new_player2_grid);
+		free_complex_grid(*new_player1_grid);
+		free_complex_grid(*new_player2_grid);
 
 		*new_player1_grid = NULL;
 		*new_player2_grid = NULL;

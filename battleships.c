@@ -27,8 +27,8 @@ int play_one_game(void)
 	}
 
 	// Grid initialisation
-	int **player1_grid = NULL;
-	int **player2_grid = NULL;
+	Complex_grid **player1_grid = NULL;
+	Complex_grid **player2_grid = NULL;
 
 	get_new_grids(NULL, NULL, &player1_grid, &player2_grid, rows, cols);
 
@@ -45,8 +45,8 @@ int play_one_game(void)
 	if (!player1_ships || !player2_ships) {
 		fprintf(stderr, "alloc_ship_vector() failed\n");
 
-		free_int_matrix(player1_grid);
-		free_int_matrix(player2_grid);
+		free_complex_grid(player1_grid);
+		free_complex_grid(player2_grid);
 
 		free(player1_ships);
 		free(player2_ships);
@@ -68,24 +68,26 @@ int play_one_game(void)
 		}
 
 		if (current_player == 1) {
-			if (!add_ship_to_grid(player1_grid, rows, cols, ship)) {
+			player1_ships[num_player1_ships] = ship;
+
+			if (!add_ship_to_grid(player1_grid, rows, cols, &player1_ships[num_player1_ships])) {
 				log_cannot_place(ship.len, ship.dir, get_grid_coords(ship.start));
 
 				--i;
 				continue;
 			}
 
-			player1_ships[num_player1_ships] = ship;
 			num_player1_ships++;
 		} else { // current_player == 2
-			if (!add_ship_to_grid(player2_grid, rows, cols, ship)) {
+			player2_ships[num_player2_ships] = ship;
+
+			if (!add_ship_to_grid(player2_grid, rows, cols, &player2_ships[num_player2_ships])) {
 				log_cannot_place(ship.len, ship.dir, get_grid_coords(ship.start));
 
 				--i;
 				continue;
 			}
 
-			player2_ships[num_player2_ships] = ship;
 			num_player2_ships++;
 		}
 
@@ -109,24 +111,21 @@ int play_one_game(void)
 
 		coords_t matrix_hit_coords = get_matrix_coords(grid_hit_coords);
 
-		int **current_attacked_grid = NULL;
-		ship_t *currently_attacked_ships = NULL;
+		Complex_grid **current_attacked_grid = NULL;
 		size_t *num_ships_currently_attacked = NULL;
 
 		if (current_player == 1) {
 			current_attacked_grid = player2_grid;
-			currently_attacked_ships = player2_ships;
 			num_ships_currently_attacked = &num_ships_left_player2;
 		} else { // current_player == 2
 			current_attacked_grid = player1_grid;
-			currently_attacked_ships = player1_ships;
 			num_ships_currently_attacked = &num_ships_left_player1;
 		}
 
 		// Try to hit ship
 		ship_t hit_ship;
 
-		int hit_result = try_hitting(current_attacked_grid, matrix_hit_coords, currently_attacked_ships, num_ships_currently_attacked, &hit_ship);
+		int hit_result = try_hitting(current_attacked_grid, matrix_hit_coords, &hit_ship);
 
 		switch (hit_result) {
 		case HIT_MISS:
@@ -136,6 +135,8 @@ int play_one_game(void)
 			log_hit_successful(current_player, hit_ship.len, grid_hit_coords);
 			break;
 		case HIT_DESTROY:
+			(*num_ships_currently_attacked)--;
+
 			// TODO: Refactor log_destroy to avoid this mess
 			coords_t ship_start = get_grid_coords(hit_ship.start);
 			coords_t ship_end = get_grid_coords(hit_ship.end);
@@ -154,8 +155,8 @@ int play_one_game(void)
 	}
 
 	// Free used memory
-	free_int_matrix(player1_grid);
-	free_int_matrix(player2_grid);
+	free_complex_grid(player1_grid);
+	free_complex_grid(player2_grid);
 
 	free(player1_ships);
 	free(player2_ships);
@@ -175,22 +176,19 @@ int get_other_player(int player)
 	}
 }
 
-int try_hitting(int **grid, coords_t hit_coords, ship_t *ships, size_t *num_ships, ship_t *hit_ship)
+int try_hitting(Complex_grid **grid, coords_t hit_coords, ship_t *hit_ship)
 {
-	int *space_to_hit = &grid[hit_coords.row][hit_coords.col];
+	Complex_grid *space_to_hit = &grid[hit_coords.row][hit_coords.col];
 
-	if (*space_to_hit == -1) {
+	if (space_to_hit->space == (unsigned short)-1) {
 		return HIT_REPEAT;
 	}
 
 	// Mark space as hit
-	*space_to_hit = -1;
+	space_to_hit->space = -1;
 
-	size_t hit_ship_index = 0;
-
-	if (find_hit_ship_index(ships, *num_ships, hit_coords, &hit_ship_index) == 1
-		&& *space_to_hit != 0) {
-		*hit_ship = ships[hit_ship_index];
+	if (space_to_hit->ship) {
+		*hit_ship = *space_to_hit->ship;
 
 		// Rule: if ship head is hit, the whole ship is destroyed
 		int was_ship_head_hit = 0;
@@ -200,11 +198,8 @@ int try_hitting(int **grid, coords_t hit_coords, ship_t *ships, size_t *num_ship
 			destroy_ship(grid, *hit_ship);
 		}
 
-		// Check if ship was destroyed as a result of the hit,
-		// and remove it from the hit player's ship list
+		// Check if ship was destroyed as a result of the hit
 		if (was_ship_head_hit || is_ship_destroyed(grid, *hit_ship)) {
-			remove_ship_from_list(ships, num_ships, hit_ship_index);
-
 			return HIT_DESTROY;
 		}
 
@@ -235,7 +230,7 @@ int find_hit_ship_index(ship_t *ships, size_t num_ships, coords_t hit_coords, si
 	return 0;
 }
 
-int is_ship_destroyed(int **grid, ship_t ship)
+int is_ship_destroyed(Complex_grid **grid, ship_t ship)
 {
 	coords_t ship_coords[MAX_SHIP_LEN];
 	get_ordered_ship_coords(ship_coords, ship);
@@ -243,7 +238,7 @@ int is_ship_destroyed(int **grid, ship_t ship)
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		if (grid[current_coords.row][current_coords.col] != 0) {
+		if (grid[current_coords.row][current_coords.col].space != 0) {
 			return 0;
 		}
 	}
@@ -260,7 +255,7 @@ void remove_ship_from_list(ship_t *ships, size_t *num_ships, size_t index)
 	(*num_ships)--;
 }
 
-int destroy_ship(int **grid, ship_t ship)
+int destroy_ship(Complex_grid **grid, ship_t ship)
 {
 	coords_t ship_coords[MAX_SHIP_LEN];
 	get_ordered_ship_coords(ship_coords, ship);
@@ -268,8 +263,9 @@ int destroy_ship(int **grid, ship_t ship)
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		if (grid[current_coords.row][current_coords.col] != -1) {
-			grid[current_coords.row][current_coords.col] = 0;
+		if (grid[current_coords.row][current_coords.col].space != (unsigned short)-1) {
+			grid[current_coords.row][current_coords.col].space = 0;
+			grid[current_coords.row][current_coords.col].ship = NULL;
 		}
 	}
 

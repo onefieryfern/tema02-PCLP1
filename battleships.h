@@ -10,10 +10,10 @@
 int play_one_game(void);
 int get_other_player(int player);
 
-int try_hitting(int **grid, coords_t hit_coords, ship_t *ships, size_t *num_ships, ship_t *hit_ship);
+int try_hitting(Complex_grid **grid, coords_t hit_coords, ship_t *hit_ship);
 int find_hit_ship_index(ship_t *ships, size_t num_ships, coords_t hit_coords, size_t *index);
-int is_ship_destroyed(int **grid, ship_t ship);
+int is_ship_destroyed(Complex_grid **grid, ship_t ship);
 void remove_ship_from_list(ship_t *ships, size_t *num_ships, size_t index);
-int destroy_ship(int **grid, ship_t ship);
+int destroy_ship(Complex_grid **grid, ship_t ship);
 
 #endif

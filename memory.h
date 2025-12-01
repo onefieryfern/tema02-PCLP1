@@ -16,4 +16,8 @@ void zero_out_matrix(int **arr, size_t rows, size_t cols);
 
 ship_t *alloc_ship_vector(size_t size);
 
+Complex_grid **alloc_complex_grid(size_t rows, size_t cols);
+void free_complex_grid(Complex_grid **arr);
+void zero_out_complex_grid(Complex_grid **arr, size_t rows, size_t cols);
+
 #endif
