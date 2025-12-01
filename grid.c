@@ -112,3 +112,25 @@ void get_new_grids(grid_element_t **old_player1_grid, grid_element_t **old_playe
 		*new_player2_grid = NULL;
 	}
 }
+
+unsigned long long get_num_ships_for_size(size_t rows, size_t cols)
+{
+	unsigned long long num_ships = 0;
+
+	// Albacore
+	num_ships += (rows * cols) / 20;
+
+	// Laffey
+	num_ships += (rows * cols) / 30;
+
+	// Belfast
+	num_ships += (rows * cols) / 40;
+
+	// Yamato
+	num_ships += (rows * cols) / 55;
+
+	// Shinano
+	num_ships += (rows * cols) / 70;
+
+	return num_ships;
+}

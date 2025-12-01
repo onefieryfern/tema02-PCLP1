@@ -14,17 +14,7 @@ int play_one_game(void)
 	unsigned long long rows, cols;
 	scanf("%llu %llu", &rows, &cols);
 
-	unsigned long long num_ships_of_type[NUM_SHIP_TYPES + 1];
-	num_ships_of_type[albacore] = (rows * cols) / 20;
-	num_ships_of_type[laffey] = (rows * cols) / 30;
-	num_ships_of_type[belfast] = (rows * cols) / 40;
-	num_ships_of_type[yamato] = (rows * cols) / 55;
-	num_ships_of_type[shinano] = (rows * cols) / 70;
-
-	unsigned long long num_ships = 0;
-	for (int i = 1; i <= NUM_SHIP_TYPES; ++i) {
-		num_ships += num_ships_of_type[i];
-	}
+	unsigned long long num_ships = get_num_ships_for_size(rows, cols);
 
 	// Grid initialisation
 	grid_element_t **player1_grid = NULL;
@@ -57,45 +47,7 @@ int play_one_game(void)
 	unsigned long long num_player1_ships = 0;
 	unsigned long long num_player2_ships = 0;
 
-	int current_player = 1;
-	for (unsigned long long i = 0; i < 2 * num_ships; ++i) {
-		ship_t ship;
-
-		if (read_ship(&ship) == ERR_SHIP_OUT_OF_BOUNDS) {
-			log_cannot_place(ship);
-
-			--i;
-			continue;
-		}
-
-		grid_element_t **current_grid = NULL;
-		ship_t *current_ships = NULL;
-		unsigned long long *current_num_ships = NULL;
-
-		if (current_player == 1) {
-			current_grid = player1_grid;
-			current_ships = player1_ships;
-			current_num_ships = &num_player1_ships;
-
-		} else { // current_player == 2
-			current_grid = player2_grid;
-			current_ships = player2_ships;
-			current_num_ships = &num_player2_ships;
-		}
-
-		current_ships[*current_num_ships] = ship;
-
-		if (!add_ship_to_grid(current_grid, rows, cols, &current_ships[*current_num_ships])) {
-			log_cannot_place(ship);
-
-			--i;
-			continue;
-		}
-
-		(*current_num_ships)++;
-
-		current_player = get_other_player(current_player);
-	}
+	read_and_place_ships(num_ships, rows, cols, player1_grid, player1_ships, &num_player1_ships, player2_grid, player2_ships, &num_player2_ships);
 
 	// Print players' grids
 	print_grid(player1_grid, rows, cols);
@@ -103,7 +55,7 @@ int play_one_game(void)
 	print_grid(player2_grid, rows, cols);
 
 	// Play one game
-	current_player = 1;
+	int current_player = 1;
 
 	unsigned long long num_ships_left_player1 = num_player1_ships;
 	unsigned long long num_ships_left_player2 = num_player2_ships;
@@ -173,6 +125,51 @@ int get_other_player(int player)
 		return 1;
 	default:
 		return -1;
+	}
+}
+
+void read_and_place_ships(unsigned long long num_ships_per_player, size_t rows, size_t cols,
+				grid_element_t **player1_grid, ship_t *player1_ships, unsigned long long *num_player1_ships_ptr,
+				grid_element_t **player2_grid, ship_t *player2_ships, unsigned long long *num_player2_ships_ptr)
+{
+	int current_player = 1;
+	for (unsigned long long i = 0; i < 2 * num_ships_per_player; ++i) {
+		ship_t ship;
+
+		if (read_ship(&ship) == ERR_SHIP_OUT_OF_BOUNDS) {
+			log_cannot_place(ship);
+
+			--i;
+			continue;
+		}
+
+		grid_element_t **current_grid = NULL;
+		ship_t *current_ships = NULL;
+		unsigned long long *current_num_ships = NULL;
+
+		if (current_player == 1) {
+			current_grid = player1_grid;
+			current_ships = player1_ships;
+			current_num_ships = num_player1_ships_ptr;
+
+		} else { // current_player == 2
+			current_grid = player2_grid;
+			current_ships = player2_ships;
+			current_num_ships = num_player2_ships_ptr;
+		}
+
+		current_ships[*current_num_ships] = ship;
+
+		if (!add_ship_to_grid(current_grid, rows, cols, &current_ships[*current_num_ships])) {
+			log_cannot_place(ship);
+
+			--i;
+			continue;
+		}
+
+		(*current_num_ships)++;
+
+		current_player = get_other_player(current_player);
 	}
 }
 
