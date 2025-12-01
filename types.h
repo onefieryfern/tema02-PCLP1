@@ -11,7 +11,10 @@ typedef struct {
 	unsigned long long col;
 } coords_t;
 
-typedef enum { vertical, horizontal } direction_t;
+typedef enum {
+	vertical,
+	horizontal
+} direction_t;
 
 typedef enum {
 	albacore = 1,
