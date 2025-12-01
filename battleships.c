@@ -209,27 +209,6 @@ int try_hitting(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
 	return HIT_MISS;
 }
 
-int find_hit_ship_index(ship_t *ships, size_t num_ships, coords_t hit_coords, size_t *index)
-{
-	for (size_t i = 0; i < num_ships; ++i) {
-		ship_t current_ship = ships[i];
-
-		coords_t ship_coords[MAX_SHIP_LEN];
-		get_ordered_ship_coords(ship_coords, current_ship);
-
-		for (size_t j = 0; j < current_ship.len; ++j) {
-			if (are_coords_equal(ship_coords[j], hit_coords)) {
-				*index = i;
-
-				return 1;
-			}
-		}
-	}
-
-	// Ship not found
-	return 0;
-}
-
 int is_ship_destroyed(grid_element_t **grid, ship_t ship)
 {
 	coords_t ship_coords[MAX_SHIP_LEN];
