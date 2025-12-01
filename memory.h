@@ -7,7 +7,6 @@
 #include "types.h"
 #include <stdlib.h>
 
-// char *alloc_str(size_t size);
 char *dup_str(const char *str);
 
 ship_t *alloc_ship_vector(size_t size);

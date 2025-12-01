@@ -7,19 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-char *alloc_str(size_t size)
-{
-	char* str = (char *)malloc(size * sizeof(char));
-
-	if (str == NULL) {
-		fprintf(stderr, "malloc() failed\n");
-	}
-
-	return str;
-}
-*/
-
 char *dup_str(const char *str)
 {
 	size_t len = strlen(str);
