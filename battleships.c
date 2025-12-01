@@ -243,15 +243,6 @@ int is_ship_destroyed(grid_element_t **grid, ship_t ship)
 	return 1;
 }
 
-void remove_ship_from_list(ship_t *ships, size_t *num_ships, size_t index)
-{
-	for (size_t i = index; i < *num_ships - 1; ++i) {
-		ships[i] = ships[i + 1];
-	}
-
-	(*num_ships)--;
-}
-
 int destroy_ship(grid_element_t **grid, ship_t ship)
 {
 	coords_t ship_coords[MAX_SHIP_LEN];
