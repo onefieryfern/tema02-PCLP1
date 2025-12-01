@@ -61,7 +61,7 @@ int play_one_game(void)
 		ship_t ship;
 
 		if (read_ship(&ship) == -1) {
-			log_cannot_place(ship.len, ship.dir, get_grid_coords(ship.start));
+			log_cannot_place(ship);
 
 			--i;
 			continue;
@@ -71,7 +71,7 @@ int play_one_game(void)
 			player1_ships[num_player1_ships] = ship;
 
 			if (!add_ship_to_grid(player1_grid, rows, cols, &player1_ships[num_player1_ships])) {
-				log_cannot_place(ship.len, ship.dir, get_grid_coords(ship.start));
+				log_cannot_place(ship);
 
 				--i;
 				continue;
@@ -82,7 +82,7 @@ int play_one_game(void)
 			player2_ships[num_player2_ships] = ship;
 
 			if (!add_ship_to_grid(player2_grid, rows, cols, &player2_ships[num_player2_ships])) {
-				log_cannot_place(ship.len, ship.dir, get_grid_coords(ship.start));
+				log_cannot_place(ship);
 
 				--i;
 				continue;
@@ -137,13 +137,10 @@ int play_one_game(void)
 		case HIT_DESTROY:
 			(*num_ships_currently_attacked)--;
 
-			// TODO: Refactor log_destroy to avoid this mess
-			coords_t ship_start = get_grid_coords(hit_ship.start);
-			coords_t ship_end = get_grid_coords(hit_ship.end);
-			log_destroy(current_player, hit_ship.len, ship_start, ship_end);
+			log_destroy(current_player, hit_ship);
 			break;
 		case HIT_REPEAT:
-			log_already_hit(grid_hit_coords, current_player);
+			log_already_hit(current_player, grid_hit_coords);
 		}
 
 		if (num_ships_left_player1 == 0 || num_ships_left_player2 == 0) {

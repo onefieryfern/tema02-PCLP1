@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
+void log_hit_successful(int player_num, ship_type_t ship_type, coords_t hit_coords)
 {
 	char *ship_type_str = get_ship_type_str(ship_type);
 
@@ -17,33 +17,35 @@ void log_hit_successful(int player_num, ship_type_t ship_type, coords_t coords)
 	}
 
 	printf("Jucatorul %d a lovit o nava %s la coordonatele (%llu, %llu).\n",
-		   player_num, ship_type_str, coords.row, coords.col);
+		   player_num, ship_type_str, hit_coords.row, hit_coords.col);
 
 	// Cleanup
 	free(ship_type_str);
 }
 
-void log_hit_miss(int player_num, coords_t coords)
+void log_hit_miss(int player_num, coords_t hit_coords)
 {
 	printf("Jucatorul %d a ratat o lovitura la coordonatele (%llu, %llu).\n",
-		   player_num, coords.row, coords.col);
+		   player_num, hit_coords.row, hit_coords.col);
 }
 
-void log_already_hit(coords_t coords, int player_num)
+void log_already_hit(int player_num, coords_t hit_coords)
 {
 	printf("Coordonatele (%llu, %llu) au fost deja atacate de jucatorul %d.\n",
-		   coords.row, coords.col, player_num);
+		   hit_coords.row, hit_coords.col, player_num);
 }
 
-void log_destroy(int player_num, ship_type_t ship_type,
-				 coords_t start, coords_t end)
+void log_destroy(int player_num, ship_t hit_ship)
 {
-	char *ship_type_str = get_ship_type_str(ship_type);
+	char *ship_type_str = get_ship_type_str(hit_ship.len);
 
 	if (!ship_type_str) {
 		fprintf(stderr, "get_ship_type_str() failed\n");
 		return;
 	}
+
+	coords_t start = get_grid_coords(hit_ship.start);
+	coords_t end = get_grid_coords(hit_ship.end);
 
 	printf("Jucatorul %d a distrus o nava %s plasata intre coordonatele "
 		   "(%llu, %llu) si (%llu, %llu).\n", player_num, ship_type_str,
@@ -53,10 +55,9 @@ void log_destroy(int player_num, ship_type_t ship_type,
 	free(ship_type_str);
 }
 
-void log_cannot_place(ship_type_t ship_type, direction_t direction,
-					  coords_t coords)
+void log_cannot_place(ship_t ship)
 {
-	char *ship_type_str = get_ship_type_str(ship_type);
+	char *ship_type_str = get_ship_type_str(ship.len);
 
 	if (!ship_type_str) {
 		fprintf(stderr, "get_ship_type_str() failed\n");
@@ -65,7 +66,7 @@ void log_cannot_place(ship_type_t ship_type, direction_t direction,
 
 	char *direction_str = NULL;
 
-	switch (direction) {
+	switch (ship.dir) {
 	case vertical:
 		direction_str = dup_str("vertical");
 		break;
@@ -78,6 +79,8 @@ void log_cannot_place(ship_type_t ship_type, direction_t direction,
 		fprintf(stderr, "dup_str() failed\n");
 		return;
 	}
+
+	coords_t coords = get_grid_coords(ship.start);
 
 	printf("Nava %s nu poate fi amplasata %s la coordonatele (%llu, %llu).\n",
 		   ship_type_str, direction_str, coords.row, coords.col);
