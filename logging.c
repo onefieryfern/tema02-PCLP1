@@ -44,8 +44,8 @@ void log_destroy(int player_num, ship_t hit_ship)
 		return;
 	}
 
-	coords_t start = get_grid_coords(hit_ship.start);
-	coords_t end = get_grid_coords(hit_ship.end);
+	coords_t start = get_output_coords(hit_ship.start);
+	coords_t end = get_output_coords(hit_ship.end);
 
 	printf("Jucatorul %d a distrus o nava %s plasata intre coordonatele "
 		   "(%llu, %llu) si (%llu, %llu).\n", player_num, ship_type_str,
@@ -80,7 +80,7 @@ void log_cannot_place(ship_t ship)
 		return;
 	}
 
-	coords_t coords = get_grid_coords(ship.start);
+	coords_t coords = get_output_coords(ship.start);
 
 	printf("Nava %s nu poate fi amplasata %s la coordonatele (%llu, %llu).\n",
 		   ship_type_str, direction_str, coords.row, coords.col);
