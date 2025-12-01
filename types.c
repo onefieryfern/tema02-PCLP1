@@ -61,7 +61,7 @@ int read_ship(ship_t *ship)
 
 	scanf(" %c", &ship_type_code);
 	scanf(" %c", &direction_code);
-	scanf("%llu %llu", &start_coords.row, &start_coords.col);
+	scanf("%zu %zu", &start_coords.row, &start_coords.col);
 
 	// Set ship length (type)
 	ship_type_t ship_type;

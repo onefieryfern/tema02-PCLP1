@@ -5,10 +5,11 @@
 #define TYPES_H
 
 #include "consts.h"
+#include <stdlib.h>
 
 typedef struct {
-	unsigned long long row;
-	unsigned long long col;
+	size_t row;
+	size_t col;
 } coords_t;
 
 typedef enum {

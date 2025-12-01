@@ -107,7 +107,7 @@ int play_one_game(void)
 
 	while (1) {
 		coords_t grid_hit_coords;
-		scanf("%llu %llu", &grid_hit_coords.row, &grid_hit_coords.col);
+		scanf("%zu %zu", &grid_hit_coords.row, &grid_hit_coords.col);
 
 		coords_t matrix_hit_coords = get_grid_coords(grid_hit_coords);
 
