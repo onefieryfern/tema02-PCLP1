@@ -34,55 +34,6 @@ char *dup_str(const char *str)
 	return new_str;
 }
 
-int **alloc_int_matrix(size_t rows, size_t cols)
-{
-	int **arr = (int **)malloc(rows * sizeof(int *));
-
-	if (!arr) {
-		fprintf(stderr, "malloc() failed\n");
-		return NULL;
-	}
-
-	int *mem_zone = (int *)malloc(rows * cols * sizeof(int));
-
-	if (!mem_zone) {
-		fprintf(stderr, "malloc() failed\n");
-
-		free(arr);
-		return NULL;
-	}
-
-	for (size_t i = 0; i < rows; ++i) {
-		arr[i] = mem_zone;
-
-		mem_zone += cols;
-	}
-	mem_zone = NULL;
-
-	return arr;
-}
-
-void free_int_matrix(int **arr)
-{
-	if (!arr) {
-		return;
-	}
-
-	int *mem_zone = arr[0];
-
-	free(mem_zone);
-	free(arr);
-}
-
-void zero_out_matrix(int **arr, size_t rows, size_t cols)
-{
-	for (size_t i = 0; i < rows; ++i) {
-		for (size_t j = 0; j < cols; ++j) {
-			arr[i][j] = 0;
-		}
-	}
-}
-
 ship_t *alloc_ship_vector(size_t size)
 {
 	ship_t *ships = (ship_t *)malloc(size * sizeof(ship_t));
@@ -95,16 +46,16 @@ ship_t *alloc_ship_vector(size_t size)
 	return ships;
 }
 
-Complex_grid **alloc_complex_grid(size_t rows, size_t cols)
+grid_element_t **alloc_grid(size_t rows, size_t cols)
 {
-	Complex_grid **arr = (Complex_grid **)malloc(rows * sizeof(Complex_grid *));
+	grid_element_t **arr = (grid_element_t **)malloc(rows * sizeof(grid_element_t *));
 
 	if (!arr) {
 		fprintf(stderr, "malloc() failed\n");
 		return NULL;
 	}
 
-	Complex_grid *mem_zone = (Complex_grid *)malloc(rows * cols * sizeof(Complex_grid));
+	grid_element_t *mem_zone = (grid_element_t *)malloc(rows * cols * sizeof(grid_element_t));
 
 	if (!mem_zone) {
 		fprintf(stderr, "malloc() failed\n");
@@ -123,24 +74,24 @@ Complex_grid **alloc_complex_grid(size_t rows, size_t cols)
 	return arr;
 }
 
-void free_complex_grid(Complex_grid **arr)
+void free_grid(grid_element_t **grid)
 {
-	if (!arr) {
+	if (!grid) {
 		return;
 	}
 
-	Complex_grid *mem_zone = arr[0];
+	grid_element_t *mem_zone = grid[0];
 
 	free(mem_zone);
-	free(arr);
+	free(grid);
 }
 
-void zero_out_complex_grid(Complex_grid **arr, size_t rows, size_t cols)
+void clear_grid(grid_element_t **grid, size_t rows, size_t cols)
 {
 	for (size_t i = 0; i < rows; ++i) {
 		for (size_t j = 0; j < cols; ++j) {
-			arr[i][j].space = 0;
-			arr[i][j].ship = NULL;
+			grid[i][j].space = 0;
+			grid[i][j].ship = NULL;
 		}
 	}
 }

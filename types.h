@@ -29,6 +29,11 @@ typedef struct {
 	coords_t end;
 } ship_t;
 
+typedef struct {
+	unsigned short space;
+	ship_t *ship;
+} grid_element_t;
+
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);
 int cast_to_direction_t(direction_t *direction, char direction_code);
 
@@ -41,10 +46,5 @@ coords_t get_grid_coords(coords_t coords);
 int are_coords_equal(coords_t a, coords_t b);
 
 void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship);
-
-typedef struct {
-	unsigned short space;
-	ship_t *ship;
-} Complex_grid;
 
 #endif

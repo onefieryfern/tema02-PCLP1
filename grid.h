@@ -8,14 +8,14 @@
 #include <stdlib.h>
 
 int is_ship_in_grid(size_t rows, size_t cols, ship_t ship);
-int is_ship_placeable(Complex_grid **grid, size_t rows, size_t cols, ship_t ship);
-int add_ship_to_grid(Complex_grid **grid, size_t rows, size_t cols, ship_t *ship);
+int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols, ship_t ship);
+int add_ship_to_grid(grid_element_t **grid, size_t rows, size_t cols, ship_t *ship);
 
-void print_int_array(Complex_grid **arr, size_t rows, size_t cols);
+void print_grid(grid_element_t **grid, size_t rows, size_t cols);
 
-Complex_grid **get_new_grid(Complex_grid **old_grid, size_t new_rows, size_t new_cols);
-void get_new_grids(Complex_grid **old_player1_grid, Complex_grid **old_player2_grid,
-				   Complex_grid ***new_player1_grid, Complex_grid ***new_player2_grid,
+grid_element_t **get_new_grid(grid_element_t **old_grid, size_t new_rows, size_t new_cols);
+void get_new_grids(grid_element_t **old_player1_grid, grid_element_t **old_player2_grid,
+				   grid_element_t ***new_player1_grid, grid_element_t ***new_player2_grid,
 				   size_t new_rows, size_t new_cols);
 
 #endif

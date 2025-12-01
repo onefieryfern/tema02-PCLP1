@@ -27,8 +27,8 @@ int play_one_game(void)
 	}
 
 	// Grid initialisation
-	Complex_grid **player1_grid = NULL;
-	Complex_grid **player2_grid = NULL;
+	grid_element_t **player1_grid = NULL;
+	grid_element_t **player2_grid = NULL;
 
 	get_new_grids(NULL, NULL, &player1_grid, &player2_grid, rows, cols);
 
@@ -45,8 +45,8 @@ int play_one_game(void)
 	if (!player1_ships || !player2_ships) {
 		fprintf(stderr, "alloc_ship_vector() failed\n");
 
-		free_complex_grid(player1_grid);
-		free_complex_grid(player2_grid);
+		free_grid(player1_grid);
+		free_grid(player2_grid);
 
 		free(player1_ships);
 		free(player2_ships);
@@ -95,9 +95,9 @@ int play_one_game(void)
 	}
 
 	// Print players' grids
-	print_int_array(player1_grid, rows, cols);
+	print_grid(player1_grid, rows, cols);
 	printf("\n");
-	print_int_array(player2_grid, rows, cols);
+	print_grid(player2_grid, rows, cols);
 
 	// Play one game
 	current_player = 1;
@@ -111,7 +111,7 @@ int play_one_game(void)
 
 		coords_t matrix_hit_coords = get_matrix_coords(grid_hit_coords);
 
-		Complex_grid **current_attacked_grid = NULL;
+		grid_element_t **current_attacked_grid = NULL;
 		size_t *num_ships_currently_attacked = NULL;
 
 		if (current_player == 1) {
@@ -152,8 +152,8 @@ int play_one_game(void)
 	}
 
 	// Free used memory
-	free_complex_grid(player1_grid);
-	free_complex_grid(player2_grid);
+	free_grid(player1_grid);
+	free_grid(player2_grid);
 
 	free(player1_ships);
 	free(player2_ships);
@@ -173,9 +173,9 @@ int get_other_player(int player)
 	}
 }
 
-int try_hitting(Complex_grid **grid, coords_t hit_coords, ship_t *hit_ship)
+int try_hitting(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
 {
-	Complex_grid *space_to_hit = &grid[hit_coords.row][hit_coords.col];
+	grid_element_t *space_to_hit = &grid[hit_coords.row][hit_coords.col];
 
 	if (space_to_hit->space == (unsigned short)-1) {
 		return HIT_REPEAT;
@@ -227,7 +227,7 @@ int find_hit_ship_index(ship_t *ships, size_t num_ships, coords_t hit_coords, si
 	return 0;
 }
 
-int is_ship_destroyed(Complex_grid **grid, ship_t ship)
+int is_ship_destroyed(grid_element_t **grid, ship_t ship)
 {
 	coords_t ship_coords[MAX_SHIP_LEN];
 	get_ordered_ship_coords(ship_coords, ship);
@@ -252,7 +252,7 @@ void remove_ship_from_list(ship_t *ships, size_t *num_ships, size_t index)
 	(*num_ships)--;
 }
 
-int destroy_ship(Complex_grid **grid, ship_t ship)
+int destroy_ship(grid_element_t **grid, ship_t ship)
 {
 	coords_t ship_coords[MAX_SHIP_LEN];
 	get_ordered_ship_coords(ship_coords, ship);
