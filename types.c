@@ -11,24 +11,24 @@ int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code)
 	switch (ship_type_code) {
 	case 'A':
 		*ship_type = albacore;
-		return 1;
+		return SUCCESS;
 	case 'L':
 		*ship_type = laffey;
-		return 1;
+		return SUCCESS;
 	case 'B':
 		*ship_type = belfast;
-		return 1;
+		return SUCCESS;
 	case 'Y':
 		*ship_type = yamato;
-		return 1;
+		return SUCCESS;
 	case 'S':
 		*ship_type = shinano;
-		return 1;
+		return SUCCESS;
 	default:
 		fprintf(stderr, "Unknown ship type %c.\n", ship_type_code);
 	}
 
-	return 0;
+	return FAILURE;
 }
 
 int cast_to_direction_t(direction_t *direction, char direction_code)
@@ -36,15 +36,15 @@ int cast_to_direction_t(direction_t *direction, char direction_code)
 	switch (direction_code) {
 	case 'H':
 		*direction = horizontal;
-		return 1;
+		return SUCCESS;
 	case 'V':
 		*direction = vertical;
-		return 1;
+		return SUCCESS;
 	default:
 		fprintf(stderr, "Unknown direction %c.\n", direction_code);
 	}
 
-	return 0;
+	return FAILURE;
 }
 
 int read_ship(ship_t *ship)
@@ -54,19 +54,14 @@ int read_ship(ship_t *ship)
 	coords_t start_coords;
 
 	// Read from stdin
-	/*
-	scanf(" %c %c %llu %llu", &ship_type_code, &direction_code,
-		  &start_coords.row, &start_coords.col);
-	*/
-
 	scanf(" %c", &ship_type_code);
 	scanf(" %c", &direction_code);
 	scanf("%llu %llu", &start_coords.row, &start_coords.col);
 
-	// Set ship len
+	// Set ship length
 	ship_type_t ship_type;
 	if (!cast_to_ship_type_t(&ship_type, ship_type_code)) {
-		return 0;
+		return FAILURE;
 	}
 
 	ship->len = (unsigned short)ship_type;
@@ -74,7 +69,7 @@ int read_ship(ship_t *ship)
 	// Set ship direction
 	direction_t direction;
 	if (!cast_to_direction_t(&direction, direction_code)) {
-		return 0;
+		return FAILURE;
 	}
 
 	ship->dir = direction;
@@ -87,8 +82,8 @@ int read_ship(ship_t *ship)
 	ship->start = start_coords;
 
 	// Set end coordinates
-	if (calc_and_set_ship_end_coords(ship) == -1) {
-		return -1;
+	if (calc_and_set_ship_end_coords(ship) == ERR_SHIP_OUT_OF_BOUNDS) {
+		return ERR_SHIP_OUT_OF_BOUNDS;
 	}
 
 	return 1;
@@ -100,15 +95,8 @@ int calc_and_set_ship_end_coords(ship_t *ship)
 		size_t max_vertical_len = ship->start.row + 1;
 
 		if (ship->len > max_vertical_len) {
-			return -1;
+			return ERR_SHIP_OUT_OF_BOUNDS;
 		}
-
-		/*
-		// TODO: Prettify this comparison
-		if (ship->start.col < (unsigned short)(ship->len - 1)) {
-			return -1;
-		}
-		*/
 
 		// Vertical ships' start is at their bottom,
 		// thus their end is at their top
@@ -121,7 +109,7 @@ int calc_and_set_ship_end_coords(ship_t *ship)
 		ship->end.col = ship->start.col + (ship->len - 1);
 	}
 
-	return 1;
+	return SUCCESS;
 }
 
 coords_t get_matrix_coords(coords_t coords)

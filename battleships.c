@@ -60,7 +60,7 @@ int play_one_game(void)
 	for (unsigned long long i = 0; i < 2 * num_ships; ++i) {
 		ship_t ship;
 
-		if (read_ship(&ship) == -1) {
+		if (read_ship(&ship) == ERR_SHIP_OUT_OF_BOUNDS) {
 			log_cannot_place(ship);
 
 			--i;
