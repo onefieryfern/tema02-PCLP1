@@ -51,4 +51,7 @@ int are_coords_equal(coords_t a, coords_t b);
 
 void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship);
 
+char *get_ship_type_str(ship_type_t ship_type);
+char *get_direction_str(direction_t direction);
+
 #endif

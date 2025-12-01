@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "consts.h"
+#include "memory.h"
 #include <stdio.h>
 
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code)
@@ -161,4 +162,55 @@ void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship)
 			list_len++;
 		}
 	}
+}
+
+char *get_ship_type_str(ship_type_t ship_type)
+{
+	char *ship_type_str = NULL;
+
+	switch (ship_type) {
+	case albacore:
+		ship_type_str = dup_str("Albacore");
+		break;
+	case laffey:
+		ship_type_str = dup_str("Laffey");
+		break;
+	case belfast:
+		ship_type_str = dup_str("Belfast");
+		break;
+	case yamato:
+		ship_type_str = dup_str("Yamato");
+		break;
+	case shinano:
+		ship_type_str = dup_str("Shinano");
+		break;
+	}
+
+	if (!ship_type_str) {
+		fprintf(stderr, "dup_str() failed\n");
+		return NULL;
+	}
+
+	return ship_type_str;
+}
+
+char *get_direction_str(direction_t direction)
+{
+	char *direction_str = NULL;
+
+	switch (direction) {
+	case vertical:
+		direction_str = dup_str("vertical");
+		break;
+	case horizontal:
+		direction_str = dup_str("orizontal");
+		break;
+	}
+
+	if (!direction_str) {
+		fprintf(stderr, "dup_str() failed\n");
+		return NULL;
+	}
+
+	return direction_str;
 }

@@ -64,19 +64,10 @@ void log_cannot_place(ship_t ship)
 		return;
 	}
 
-	char *direction_str = NULL;
-
-	switch (ship.dir) {
-	case vertical:
-		direction_str = dup_str("vertical");
-		break;
-	case horizontal:
-		direction_str = dup_str("orizontal");
-		break;
-	}
+	char *direction_str = get_direction_str(ship.dir);
 
 	if (!direction_str) {
-		fprintf(stderr, "dup_str() failed\n");
+		fprintf(stderr, "get_direction_str() failed\n");
 		return;
 	}
 
@@ -93,34 +84,4 @@ void log_cannot_place(ship_t ship)
 void log_player_won(int player_num)
 {
 	printf("Jucatorul %d a castigat.\n", player_num);
-}
-
-char *get_ship_type_str(ship_type_t ship_type)
-{
-	char *ship_type_str = NULL;
-
-	switch (ship_type) {
-	case albacore:
-		ship_type_str = dup_str("Albacore");
-		break;
-	case laffey:
-		ship_type_str = dup_str("Laffey");
-		break;
-	case belfast:
-		ship_type_str = dup_str("Belfast");
-		break;
-	case yamato:
-		ship_type_str = dup_str("Yamato");
-		break;
-	case shinano:
-		ship_type_str = dup_str("Shinano");
-		break;
-	}
-
-	if (!ship_type_str) {
-		fprintf(stderr, "dup_str() failed\n");
-		return NULL;
-	}
-
-	return ship_type_str;
 }
