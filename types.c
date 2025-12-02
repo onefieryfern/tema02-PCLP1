@@ -214,3 +214,15 @@ char *get_direction_str(direction_t direction)
 
 	return direction_str;
 }
+
+void free_player_data(player_data_t player_data)
+{
+	free_grid(player_data.grid);
+	free(player_data.ships);
+}
+
+void free_game_state(game_state_t game_state)
+{
+	free_player_data(game_state.player1);
+	free_player_data(game_state.player2);
+}

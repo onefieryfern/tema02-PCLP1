@@ -68,4 +68,7 @@ void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship);
 char *get_ship_type_str(ship_type_t ship_type);
 char *get_direction_str(direction_t direction);
 
+void free_player_data(player_data_t player_data);
+void free_game_state(game_state_t game_state);
+
 #endif

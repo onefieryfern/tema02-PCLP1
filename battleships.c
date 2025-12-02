@@ -21,6 +21,9 @@ int play_one_game(void)
 	if (!game_state.player1.grid || !game_state.player2.grid) {
 		fprintf(stderr, "get_new_grids() failed\n");
 
+		// Cleanup
+		free_game_state(game_state);
+
 		return FAILURE;
 	}
 
@@ -86,12 +89,8 @@ int play_one_game(void)
 		current_player = get_other_player(current_player);
 	}
 
-	// Free used memory
-	free_grid(game_state.player1.grid);
-	free_grid(game_state.player2.grid);
-
-	free(game_state.player1.ships);
-	free(game_state.player2.ships);
+	// Cleanup
+	free_game_state(game_state);
 
 	return SUCCESS;
 }
@@ -119,11 +118,8 @@ int handle_input_ships(game_state_t *game_state)
 		fprintf(stderr, "alloc_ship_vector() failed\n");
 
 		// Cleanup
-		free_grid(game_state->player1.grid);
-		free_grid(game_state->player2.grid);
+		free_game_state(*game_state);
 
-		free(game_state->player1.ships);
-		free(game_state->player2.ships);
 		return FAILURE;
 	}
 
