@@ -38,6 +38,20 @@ typedef struct {
 	ship_t *ship;
 } grid_element_t;
 
+typedef struct {
+	grid_element_t **grid;
+	ship_t *ships;
+	unsigned long long num_ships;
+} player_data_t;
+
+typedef struct {
+	unsigned long long rows;
+	unsigned long long cols;
+
+	player_data_t player1;
+	player_data_t player2;
+} game_state_t;
+
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);
 int cast_to_direction_t(direction_t *direction, char direction_code);
 
