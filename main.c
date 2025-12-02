@@ -10,7 +10,7 @@ int main(void)
 	scanf("%llu", &num_games);
 
 	for (unsigned long long i = 1; i <= num_games; ++i) {
-		play_one_game();
+		read_and_play_one_game();
 	}
 
 	return 0;

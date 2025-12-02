@@ -7,10 +7,11 @@
 #include "types.h"
 #include <stdlib.h>
 
-int play_one_game(void);
+int read_and_play_one_game(void);
 int get_other_player(int player);
 
 int handle_input_ships(game_state_t *game_state);
+void play_one_game(game_state_t *game_state);
 
 int try_hitting(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship);
 int is_ship_destroyed(grid_element_t **grid, ship_t ship);

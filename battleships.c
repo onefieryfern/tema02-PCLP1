@@ -9,13 +9,13 @@
 #include "types.h"
 #include <stdio.h>
 
-int play_one_game(void)
+int read_and_play_one_game(void)
 {
 	game_state_t game_state = { 0, 0, { NULL, NULL, 0 }, { NULL, NULL, 0 } };
 
+	// Grid initialisation
 	scanf("%llu %llu", &game_state.rows, &game_state.cols);
 
-	// Grid initialisation
 	get_new_grids(NULL, NULL, &game_state.player1.grid, &game_state.player2.grid, game_state.rows, game_state.cols);
 
 	if (!game_state.player1.grid || !game_state.player2.grid) {
@@ -37,57 +37,8 @@ int play_one_game(void)
 	printf("\n");
 	print_grid(game_state.player2.grid, game_state.rows, game_state.cols);
 
-	// Play one game
-	int current_player = 1;
-
-	unsigned long long num_ships_left_player1 = game_state.player1.num_ships;
-	unsigned long long num_ships_left_player2 = game_state.player2.num_ships;
-
-	while (1) {
-		coords_t grid_hit_coords;
-		scanf("%zu %zu", &grid_hit_coords.row, &grid_hit_coords.col);
-
-		coords_t matrix_hit_coords = get_grid_coords(grid_hit_coords);
-
-		grid_element_t **current_attacked_grid = NULL;
-		unsigned long long *num_ships_currently_attacked = NULL;
-
-		if (current_player == 1) {
-			current_attacked_grid = game_state.player2.grid;
-			num_ships_currently_attacked = &num_ships_left_player2;
-		} else { // current_player == 2
-			current_attacked_grid = game_state.player1.grid;
-			num_ships_currently_attacked = &num_ships_left_player1;
-		}
-
-		// Try to hit ship
-		ship_t hit_ship;
-
-		int hit_result = try_hitting(current_attacked_grid, matrix_hit_coords, &hit_ship);
-
-		switch (hit_result) {
-		case HIT_MISS:
-			log_hit_miss(current_player, grid_hit_coords);
-			break;
-		case HIT_SUCCESS:
-			log_hit_successful(current_player, hit_ship.len, grid_hit_coords);
-			break;
-		case HIT_DESTROY:
-			(*num_ships_currently_attacked)--;
-
-			log_destroy(current_player, hit_ship);
-			break;
-		case HIT_REPEAT:
-			log_already_hit(current_player, grid_hit_coords);
-		}
-
-		if (num_ships_left_player1 == 0 || num_ships_left_player2 == 0) {
-			log_player_won(current_player);
-			break;
-		}
-
-		current_player = get_other_player(current_player);
-	}
+	// Start playing game
+	play_one_game(&game_state);
 
 	// Cleanup
 	free_game_state(game_state);
@@ -167,6 +118,63 @@ int handle_input_ships(game_state_t *game_state)
 	}
 
 	return SUCCESS;
+}
+
+void play_one_game(game_state_t *game_state)
+{
+	int current_player = 1;
+
+	unsigned long long *num_ships_left_player1 = &game_state->player1.num_ships;
+	unsigned long long *num_ships_left_player2 = &game_state->player2.num_ships;
+
+	// Game loop
+	while (1) {
+		// Read space to hit
+		coords_t input_hit_coords;
+		scanf("%zu %zu", &input_hit_coords.row, &input_hit_coords.col);
+
+		coords_t hit_coords = get_grid_coords(input_hit_coords);
+
+		// Player selection
+		grid_element_t **currently_attacked_grid = NULL;
+		unsigned long long *num_ships_currently_attacked = NULL;
+
+		if (current_player == 1) {
+			currently_attacked_grid = game_state->player2.grid;
+			num_ships_currently_attacked = num_ships_left_player2;
+		} else { // current_player == 2
+			currently_attacked_grid = game_state->player1.grid;
+			num_ships_currently_attacked = num_ships_left_player1;
+		}
+
+		// Try hitting ship
+		ship_t hit_ship;
+
+		int hit_result = try_hitting(currently_attacked_grid, hit_coords, &hit_ship);
+
+		switch (hit_result) {
+		case HIT_MISS:
+			log_hit_miss(current_player, input_hit_coords);
+			break;
+		case HIT_SUCCESS:
+			log_hit_successful(current_player, hit_ship.len, input_hit_coords);
+			break;
+		case HIT_DESTROY:
+			log_destroy(current_player, hit_ship);
+			(*num_ships_currently_attacked)--;
+			break;
+		case HIT_REPEAT:
+			log_already_hit(current_player, input_hit_coords);
+		}
+
+		// Win condition
+		if (*num_ships_left_player1 == 0 || *num_ships_left_player2 == 0) {
+			log_player_won(current_player);
+			break;
+		}
+
+		current_player = get_other_player(current_player);
+	}
 }
 
 int try_hitting(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
