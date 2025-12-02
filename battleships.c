@@ -9,39 +9,23 @@
 #include "types.h"
 #include <stdio.h>
 
-int read_and_play_one_game(void)
+int read_game_data(game_state_t *game_state)
 {
-	game_state_t game_state = { 0, 0, { NULL, NULL, 0 }, { NULL, NULL, 0 } };
-
 	// Grid initialisation
-	scanf("%llu %llu", &game_state.rows, &game_state.cols);
+	scanf("%llu %llu", &game_state->rows, &game_state->cols);
 
-	get_new_grids(NULL, NULL, &game_state.player1.grid, &game_state.player2.grid, game_state.rows, game_state.cols);
+	get_new_grids(NULL, NULL, &game_state->player1.grid, &game_state->player2.grid, game_state->rows, game_state->cols);
 
-	if (!game_state.player1.grid || !game_state.player2.grid) {
+	if (!game_state->player1.grid || !game_state->player2.grid) {
 		fprintf(stderr, "get_new_grids() failed\n");
-
-		// Cleanup
-		free_game_state(game_state);
-
 		return FAILURE;
 	}
 
 	// Read, save and place ships
-	if (handle_input_ships(&game_state) == FAILURE) {
+	if (handle_input_ships(game_state) == FAILURE) {
+		fprintf(stderr, "handle_input_ships() failed\n");
 		return FAILURE;
 	}
-
-	// Print players' grids
-	print_grid(game_state.player1.grid, game_state.rows, game_state.cols);
-	printf("\n");
-	print_grid(game_state.player2.grid, game_state.rows, game_state.cols);
-
-	// Start playing game
-	play_one_game(&game_state);
-
-	// Cleanup
-	free_game_state(game_state);
 
 	return SUCCESS;
 }
@@ -67,9 +51,6 @@ int handle_input_ships(game_state_t *game_state)
 
 	if (!game_state->player1.ships || !game_state->player2.ships) {
 		fprintf(stderr, "alloc_ship_vector() failed\n");
-
-		// Cleanup
-		free_game_state(*game_state);
 
 		return FAILURE;
 	}

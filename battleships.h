@@ -7,7 +7,7 @@
 #include "types.h"
 #include <stdlib.h>
 
-int read_and_play_one_game(void);
+int read_game_data(game_state_t *game_state);
 int get_other_player(int player);
 
 int handle_input_ships(game_state_t *game_state);
