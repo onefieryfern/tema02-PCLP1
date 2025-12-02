@@ -9,8 +9,6 @@
 
 char *dup_str(const char *str);
 
-ship_t *alloc_ship_vector(size_t size);
-
 grid_element_t **alloc_grid(size_t rows, size_t cols);
 void free_grid(grid_element_t **grid);
 void clear_grid(grid_element_t **grid, size_t rows, size_t cols);

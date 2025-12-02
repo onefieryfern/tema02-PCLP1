@@ -21,18 +21,6 @@ char *dup_str(const char *str)
 	return new_str;
 }
 
-ship_t *alloc_ship_vector(size_t size)
-{
-	ship_t *ships = (ship_t *)malloc(size * sizeof(ship_t));
-
-	if (!ships) {
-		fprintf(stderr, "malloc() failed\n");
-		return NULL;
-	}
-
-	return ships;
-}
-
 grid_element_t **alloc_grid(size_t rows, size_t cols)
 {
 	grid_element_t **arr = (grid_element_t **)malloc(rows * sizeof(grid_element_t *));

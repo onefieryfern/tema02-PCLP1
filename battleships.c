@@ -50,11 +50,11 @@ int handle_input_ships(game_state_t *game_state)
 {
 	unsigned long long num_ships_per_player = get_num_ships_for_size(game_state->rows, game_state->cols);
 
-	game_state->player1.ships = alloc_ship_vector(num_ships_per_player);
-	game_state->player2.ships = alloc_ship_vector(num_ships_per_player);
+	game_state->player1.ships = (ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
+	game_state->player2.ships = (ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
 
 	if (!game_state->player1.ships || !game_state->player2.ships) {
-		fprintf(stderr, "alloc_ship_vector() failed\n");
+		fprintf(stderr, "malloc() failed\n");
 
 		return FAILURE;
 	}
