@@ -11,7 +11,10 @@ int main(void)
 	unsigned long long num_games;
 	scanf("%llu", &num_games);
 
-	for (unsigned long long i = 1; i <= num_games; ++i) {
+	// Set up statistics
+	stats_t *stats = (stats_t *)malloc(num_games * sizeof(stats_t));
+
+	for (unsigned long long i = 0; i < num_games; ++i) {
 		// Read game parameters
 		game_state_t game_state;
 
@@ -29,11 +32,14 @@ int main(void)
 		print_grid(game_state.player2.grid, game_state.rows, game_state.cols);
 
 		// Start playing game
-		play_one_game(&game_state);
+		play_one_game(&game_state, &stats[i]);
 
 		// Cleanup
 		free_game_state(game_state);
 	}
+
+	// Cleanup
+	free(stats);
 
 	return 0;
 }

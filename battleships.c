@@ -105,7 +105,7 @@ int handle_input_ships(game_state_t *game_state)
 	return SUCCESS;
 }
 
-void play_one_game(game_state_t *game_state)
+void play_one_game(game_state_t *game_state, stats_t *stats)
 {
 	int current_player = 1;
 
@@ -136,6 +136,7 @@ void play_one_game(game_state_t *game_state)
 		ship_t hit_ship;
 
 		int hit_result = try_hitting(currently_attacked_grid, hit_coords, &hit_ship);
+		stats->num_hits++;
 
 		switch (hit_result) {
 		case HIT_MISS:
@@ -143,10 +144,14 @@ void play_one_game(game_state_t *game_state)
 			break;
 		case HIT_SUCCESS:
 			log_hit_successful(current_player, hit_ship.len, input_hit_coords);
+
+			stats->num_successful_hits++;
 			break;
 		case HIT_DESTROY:
 			log_destroy(current_player, hit_ship);
 			(*num_ships_currently_attacked)--;
+
+			stats->num_successful_hits++;
 			break;
 		case HIT_REPEAT:
 			log_already_hit(current_player, input_hit_coords);

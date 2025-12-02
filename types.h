@@ -52,6 +52,11 @@ typedef struct {
 	player_data_t player2;
 } game_state_t;
 
+typedef struct {
+	long long num_successful_hits;
+	long long num_hits;
+} stats_t;
+
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);
 int cast_to_direction_t(direction_t *direction, char direction_code);
 
