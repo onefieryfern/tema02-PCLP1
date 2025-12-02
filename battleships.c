@@ -11,11 +11,9 @@
 
 int play_one_game(void)
 {
-	game_state_t game_state;
+	game_state_t game_state = { 0, 0, { NULL, NULL, 0 }, { NULL, NULL, 0 } };
 
 	scanf("%llu %llu", &game_state.rows, &game_state.cols);
-
-	unsigned long long num_ships = get_num_ships_for_size(game_state.rows, game_state.cols);
 
 	// Grid initialisation
 	get_new_grids(NULL, NULL, &game_state.player1.grid, &game_state.player2.grid, game_state.rows, game_state.cols);
@@ -27,25 +25,9 @@ int play_one_game(void)
 	}
 
 	// Read, save and place ships
-	game_state.player1.ships = alloc_ship_vector(num_ships);
-	game_state.player2.ships = alloc_ship_vector(num_ships);
-
-	if (!game_state.player1.ships || !game_state.player2.ships) {
-		fprintf(stderr, "alloc_ship_vector() failed\n");
-
-		// Cleanup
-		free_grid(game_state.player1.grid);
-		free_grid(game_state.player2.grid);
-
-		free(game_state.player1.ships);
-		free(game_state.player2.ships);
+	if (handle_input_ships(&game_state) == FAILURE) {
 		return FAILURE;
 	}
-
-	game_state.player1.num_ships = 0;
-	game_state.player2.num_ships = 0;
-
-	read_and_place_ships(num_ships, game_state.rows, game_state.cols, game_state.player1.grid, game_state.player1.ships, &game_state.player1.num_ships, game_state.player2.grid, game_state.player2.ships, &game_state.player2.num_ships);
 
 	// Print players' grids
 	print_grid(game_state.player1.grid, game_state.rows, game_state.cols);
@@ -126,10 +108,28 @@ int get_other_player(int player)
 	}
 }
 
-void read_and_place_ships(unsigned long long num_ships_per_player, size_t rows, size_t cols,
-				grid_element_t **player1_grid, ship_t *player1_ships, unsigned long long *num_player1_ships_ptr,
-				grid_element_t **player2_grid, ship_t *player2_ships, unsigned long long *num_player2_ships_ptr)
+int handle_input_ships(game_state_t *game_state)
 {
+	unsigned long long num_ships_per_player = get_num_ships_for_size(game_state->rows, game_state->cols);
+
+	game_state->player1.ships = alloc_ship_vector(num_ships_per_player);
+	game_state->player2.ships = alloc_ship_vector(num_ships_per_player);
+
+	if (!game_state->player1.ships || !game_state->player2.ships) {
+		fprintf(stderr, "alloc_ship_vector() failed\n");
+
+		// Cleanup
+		free_grid(game_state->player1.grid);
+		free_grid(game_state->player2.grid);
+
+		free(game_state->player1.ships);
+		free(game_state->player2.ships);
+		return FAILURE;
+	}
+
+	game_state->player1.num_ships = 0;
+	game_state->player2.num_ships = 0;
+
 	int current_player = 1;
 	for (unsigned long long i = 0; i < 2 * num_ships_per_player; ++i) {
 		ship_t ship;
@@ -146,19 +146,19 @@ void read_and_place_ships(unsigned long long num_ships_per_player, size_t rows, 
 		unsigned long long *current_num_ships = NULL;
 
 		if (current_player == 1) {
-			current_grid = player1_grid;
-			current_ships = player1_ships;
-			current_num_ships = num_player1_ships_ptr;
+			current_grid = game_state->player1.grid;
+			current_ships = game_state->player1.ships;
+			current_num_ships = &game_state->player1.num_ships;
 
 		} else { // current_player == 2
-			current_grid = player2_grid;
-			current_ships = player2_ships;
-			current_num_ships = num_player2_ships_ptr;
+			current_grid = game_state->player2.grid;
+			current_ships = game_state->player2.ships;
+			current_num_ships = &game_state->player2.num_ships;
 		}
 
 		current_ships[*current_num_ships] = ship;
 
-		if (!add_ship_to_grid(current_grid, rows, cols, &current_ships[*current_num_ships])) {
+		if (!add_ship_to_grid(current_grid, game_state->rows, game_state->cols, &current_ships[*current_num_ships])) {
 			log_cannot_place(ship);
 
 			--i;
@@ -169,6 +169,8 @@ void read_and_place_ships(unsigned long long num_ships_per_player, size_t rows, 
 
 		current_player = get_other_player(current_player);
 	}
+
+	return SUCCESS;
 }
 
 int try_hitting(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
