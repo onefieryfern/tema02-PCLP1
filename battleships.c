@@ -14,12 +14,16 @@ int read_game_data(game_state_t *game_state)
 	// Grid initialisation
 	scanf("%llu %llu", &game_state->rows, &game_state->cols);
 
-	get_new_grids(NULL, NULL, &game_state->player1.grid, &game_state->player2.grid, game_state->rows, game_state->cols);
+	game_state->player1.grid = alloc_grid(game_state->rows, game_state->cols);
+	game_state->player2.grid = alloc_grid(game_state->rows, game_state->cols);
 
 	if (!game_state->player1.grid || !game_state->player2.grid) {
-		fprintf(stderr, "get_new_grids() failed\n");
+		fprintf(stderr, "alloc_grid() failed\n");
 		return FAILURE;
 	}
+
+	clear_grid(game_state->player1.grid, game_state->rows, game_state->cols);
+	clear_grid(game_state->player2.grid, game_state->rows, game_state->cols);
 
 	// Read, save and place ships
 	if (handle_input_ships(game_state) == FAILURE) {

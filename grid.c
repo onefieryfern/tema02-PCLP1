@@ -77,42 +77,6 @@ void print_grid(grid_element_t **grid, size_t rows, size_t cols)
 	}
 }
 
-grid_element_t **get_new_grid(grid_element_t **old_grid, size_t new_rows, size_t new_cols)
-{
-	free_grid(old_grid);
-	old_grid = NULL;
-
-	grid_element_t **new_grid = alloc_grid(new_rows, new_cols);
-
-	if (!new_grid) {
-		fprintf(stderr, "alloc_grid() failed\n");
-
-		return NULL;
-	}
-
-	clear_grid(new_grid, new_rows, new_cols);
-
-	return new_grid;
-}
-
-void get_new_grids(grid_element_t **old_player1_grid, grid_element_t **old_player2_grid,
-				   grid_element_t ***new_player1_grid, grid_element_t ***new_player2_grid,
-				   size_t new_rows, size_t new_cols)
-{
-	*new_player1_grid = get_new_grid(old_player1_grid, new_rows, new_cols);
-	*new_player2_grid = get_new_grid(old_player2_grid, new_rows, new_cols);
-
-	if (!*new_player1_grid || !*new_player2_grid) {
-		fprintf(stderr, "get_new_grid() failed\n");
-
-		free_grid(*new_player1_grid);
-		free_grid(*new_player2_grid);
-
-		*new_player1_grid = NULL;
-		*new_player2_grid = NULL;
-	}
-}
-
 unsigned long long get_num_ships_for_size(size_t rows, size_t cols)
 {
 	unsigned long long num_ships = 0;
