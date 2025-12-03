@@ -53,8 +53,10 @@ typedef struct {
 } game_state_t;
 
 typedef struct {
-	long long num_successful_hits;
-	long long num_hits;
+	unsigned long long num_successful_hits;
+	unsigned long long num_hits;
+
+	unsigned long long num_ships_per_grid;
 } stats_t;
 
 int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);

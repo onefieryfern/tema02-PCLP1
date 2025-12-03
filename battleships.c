@@ -107,6 +107,9 @@ int handle_input_ships(game_state_t *game_state)
 
 void play_one_game(game_state_t *game_state, stats_t *stats)
 {
+	// Set up statistics
+	stats->num_ships_per_grid = get_num_ships_for_size(game_state->rows, game_state->cols);
+
 	int current_player = 1;
 
 	unsigned long long *num_ships_left_player1 = &game_state->player1.num_ships;
