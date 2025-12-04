@@ -122,7 +122,11 @@ void handle_single_game_max_stat(stats_t stat, double accuracy)
 void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double accuracy)
 {
 	stats_t *ordered_stats = malloc(count * sizeof(stats_t));
-	// TODO progr def
+
+	if (!ordered_stats) {
+		fprintf(stderr, "malloc failed()\n");
+		return;
+	}
 
 	for (unsigned long long i = 0; i < count; ++i) {
 		ordered_stats[i] = stats[i];
@@ -165,7 +169,11 @@ void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double 
 void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double accuracy)
 {
 	stats_t *ordered_stats = malloc(count * sizeof(stats_t));
-	// TODO progr def
+
+	if (!ordered_stats) {
+		fprintf(stderr, "malloc failed()\n");
+		return;
+	}
 
 	for (unsigned long long i = 0; i < count; ++i) {
 		ordered_stats[i] = stats[i];
