@@ -224,24 +224,25 @@ double calc_total_acc(unsigned long long count, stats_t *stats)
 
 int cmp_double(double a, double b)
 {
-	char a_str[8] = "";
-	sprintf(a_str, "%07.3lf", a);
-	a_str[6] = '\0';
+	int result;
 
-	char b_str[8] = "";
-	sprintf(b_str, "%07.3lf", b);
-	b_str[6] = '\0';
+	char *a_str = double_to_str(a);
+	char *b_str = double_to_str(b);
 
 	if (strcmp(a_str, b_str) == 0) {
-		return 0;
+		result = 0;
 	}
 
 	if (a > b) {
-		return 1;
+		result = 1;
+	} else { // a < b
+		result = -1;
 	}
 
-	// a < b
-	return -1;
+	free(a_str);
+	free(b_str);
+
+	return result;
 }
 
 char *double_to_str(double a)
