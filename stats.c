@@ -150,29 +150,21 @@ void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double 
 		}
 	}
 
-	stats_t *ordered_stats_copy = malloc(count * sizeof(stats_t));
-	// TODO progr def
-
-	for (unsigned long long i = 0; i < count; ++i) {
-		ordered_stats_copy[i] = ordered_stats[i];
-	}
-
 	unsigned long long found_count = 0;
 	for (unsigned long long i = 0; i < count; ++i) {
 		if (ordered_stats[i].num_successful_hits == ordered_stats[i].num_hits) {
 			continue;
 		}
 
-		if (cmp_double(calc_total_acc(count, ordered_stats_copy), accuracy) >= 0) {
+		if (cmp_double(calc_total_acc(count, ordered_stats), accuracy) >= 0) {
 			break;
 		}
 
-		ordered_stats_copy[i].num_successful_hits = ordered_stats[i].num_hits;
+		ordered_stats[i].num_successful_hits = ordered_stats[i].num_hits;
 		++found_count;
 	}
 
 	free(ordered_stats);
-	free(ordered_stats_copy);
 
 	sprintf(min_str, "%llu", found_count);
 
@@ -206,25 +198,17 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 		}
 	}
 
-	stats_t *ordered_stats_copy = malloc(count * sizeof(stats_t));
-	// TODO progr def
-
-	for (unsigned long long i = 0; i < count; ++i) {
-		ordered_stats_copy[i] = ordered_stats[i];
-	}
-
 	unsigned long long found_count = 0;
-	for (unsigned long long i = 0; i < count && cmp_double(calc_total_acc(count, ordered_stats_copy), accuracy) >= 0; ++i) {
-		if (ordered_stats_copy[i].num_successful_hits == 0) {
+	for (unsigned long long i = 0; i < count && cmp_double(calc_total_acc(count, ordered_stats), accuracy) >= 0; ++i) {
+		if (ordered_stats[i].num_successful_hits == 0) {
 			continue;
 		}
 
-		ordered_stats_copy[i].num_successful_hits = 0;
+		ordered_stats[i].num_successful_hits = 0;
 		++found_count;
 	}
 
 	free(ordered_stats);
-	free(ordered_stats_copy);
 
 	if (found_count > 0) {
 		// Temporary hack
