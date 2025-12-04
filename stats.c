@@ -190,7 +190,7 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 
 	for (unsigned long long i = 0; i < count - 1; ++i) {
 		for (unsigned long long j = i + 1; j < count; ++j) {
-			if (cmp_double(calc_game_acc(stats[i]) * (double)stats->num_ships_per_grid, calc_game_acc(stats[j]) * (double)stats->num_ships_per_grid) > 0) {
+			if (cmp_double(calc_game_acc(stats[i]) / 100 * (double)stats->num_ships_per_grid, calc_game_acc(stats[j]) / 100 * (double)stats->num_ships_per_grid) > 0) {
 				stats_t tmp = ordered_stats[i];
 				ordered_stats[i] = ordered_stats[j];
 				ordered_stats[j] = tmp;
