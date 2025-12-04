@@ -14,9 +14,9 @@ int main(void)
 	unsigned long long num_games;
 	scanf("%llu", &num_games);
 
-	// Set up statistics
-	stats_t *player1_stats = (stats_t *)malloc(num_games * sizeof(stats_t));
-	stats_t *player2_stats = (stats_t *)malloc(num_games * sizeof(stats_t));
+	// Set up statistics storage
+	stats_t *player1_stats = (stats_t *)calloc(num_games, sizeof(stats_t));
+	stats_t *player2_stats = (stats_t *)calloc(num_games, sizeof(stats_t));
 
 	if (!player1_stats || !player2_stats) {
 		fprintf(stderr, "malloc() failed\n");
@@ -27,10 +27,7 @@ int main(void)
 		return 0;
 	}
 
-	memset(player1_stats, 0, num_games * sizeof(stats_t));
-	memset(player2_stats, 0, num_games * sizeof(stats_t));
-
-	//
+	// Read and play num_games games
 	for (unsigned long long i = 0; i < num_games; ++i) {
 		// Read game parameters
 		game_state_t game_state;
@@ -55,6 +52,7 @@ int main(void)
 		free_game_state(game_state);
 	}
 
+	// Read statistics requirements and print results
 	handle_stats(num_games, player1_stats, player2_stats);
 
 	// Cleanup
