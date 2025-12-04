@@ -77,39 +77,34 @@ void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsig
 
 void handle_single_game_min_stat(stats_t stat, double accuracy)
 {
-	char *min_str = (char *)malloc(256 * sizeof(char));
-	min_str[0] = '\0';
+	unsigned long long min = 0;
 
 	for (unsigned long long i = stat.num_successful_hits; i <= stat.num_hits; ++i) {
 		stats_t test_stats = stat;
 		test_stats.num_successful_hits = i;
 
 		if (cmp_double(calc_game_acc(test_stats), accuracy) >= 0) {
-			unsigned long long min = i - stat.num_successful_hits;
-			sprintf(min_str, "%llu", min);
+			min = i - stat.num_successful_hits;
 			break;
 		}
 	}
 
 	char *game_acc = double_to_str(calc_game_acc(stat));
-	printf("%s.%s\n", game_acc, min_str);
+	printf("%s.%llu\n", game_acc, min);
 
 	free(game_acc);
-	free(min_str);
 }
 
 void handle_single_game_max_stat(stats_t stat, double accuracy)
 {
-	char *max_str = (char *)malloc(256 * sizeof(char));
-	max_str[0] = '\0';
+	unsigned long long max = 0;
 
 	for (unsigned long long i = stat.num_successful_hits - 1; ; --i) {
 		stats_t test_stats = stat;
 		test_stats.num_successful_hits = i;
 
 		if (cmp_double(calc_game_acc(test_stats), accuracy) < 0) {
-			unsigned long long max = stat.num_successful_hits - (i + 1);
-			sprintf(max_str, "%llu", max);
+			max = stat.num_successful_hits - (i + 1);
 			break;
 		}
 
@@ -119,17 +114,13 @@ void handle_single_game_max_stat(stats_t stat, double accuracy)
 	}
 
 	char *game_acc = double_to_str(calc_game_acc(stat));
-	printf("%s.%s\n", game_acc, max_str);
+	printf("%s.%llu\n", game_acc, max);
 
 	free(game_acc);
-	free(max_str);
 }
 
 void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double accuracy)
 {
-	char *min_str = (char *)malloc(256 * sizeof(char));
-	min_str[0] = '\0';
-
 	stats_t *ordered_stats = malloc(count * sizeof(stats_t));
 	// TODO progr def
 
@@ -164,23 +155,15 @@ void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double 
 		++found_count;
 	}
 
-	free(ordered_stats);
-
-	sprintf(min_str, "%llu", found_count);
-
 	char *total_acc = double_to_str(calc_total_acc(count, stats));
+	printf("%s.%llu\n", total_acc, found_count);
 
-	printf("%s.%s\n", total_acc, min_str);
-
+	free(ordered_stats);
 	free(total_acc);
-	free(min_str);
 }
 
 void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double accuracy)
 {
-	char *min_str = (char *)malloc(256 * sizeof(char));
-	min_str[0] = '\0';
-
 	stats_t *ordered_stats = malloc(count * sizeof(stats_t));
 	// TODO progr def
 
@@ -212,16 +195,11 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 		}
 	}
 
-	free(ordered_stats);
-
-	sprintf(min_str, "%llu", found_count);
-
 	char *total_acc = double_to_str(calc_total_acc(count, stats));
+	printf("%s.%llu\n", total_acc, found_count);
 
-	printf("%s.%s\n", total_acc, min_str);
-
+	free(ordered_stats);
 	free(total_acc);
-	free(min_str);
 }
 
 double calc_game_acc(stats_t stats)
