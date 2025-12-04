@@ -54,49 +54,17 @@ void handle_stats(unsigned long long count, stats_t *player1_stats, stats_t *pla
 
 void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsigned short game_index, double acc, char *min_max)
 {
-	if (num_games == 'U') { // cerintele 2, 4
+	if (num_games == 'U') {
 		if (game_index > count) {
 			printf("Nu exista date pentru meciul cerut.\n");
 			return;
 		}
 
-		char *min_max_str = (char *)malloc(256 * sizeof(char));
-		min_max_str[0] = '\0';
-
 		if (strcmp(min_max, "MIN") == 0) {
-			for (unsigned long long i = stats[game_index].num_successful_hits; i <= stats[game_index].num_hits; ++i) {
-				stats_t fake_stats = stats[game_index];
-				fake_stats.num_successful_hits = i;
-
-				if (cmp_double(calc_game_acc(fake_stats), acc) >= 0) {
-					unsigned long long min = i - stats[game_index].num_successful_hits;
-					sprintf(min_max_str, "%llu", min);
-					break;
-				}
-			}
+			handle_single_game_min_stat(stats[game_index], acc);
 		} else { // strcmp(min_max, "MAX") == 0
-			for (unsigned long long i = stats[game_index].num_successful_hits - 1; ; --i) {
-				stats_t fake_stats = stats[game_index];
-				fake_stats.num_successful_hits = i;
-
-				if (cmp_double(calc_game_acc(fake_stats), acc) < 0) {
-					unsigned long long max = stats[game_index].num_successful_hits - (i + 1);
-					sprintf(min_max_str, "%llu", max);
-					break;
-				}
-
-				if (i == 0) {
-					break;
-				}
-			}
+			handle_single_game_max_stat(stats[game_index], acc);
 		}
-
-		char *game_acc = double_to_str(calc_game_acc(stats[game_index]));
-
-		printf("%s.%s\n", game_acc, min_max_str);
-
-		free(game_acc);
-		free(min_max_str);
 	} else { // num_games == 'T' // cerintele 1,3
 		char *min_max_str = (char *)malloc(256 * sizeof(char));
 		min_max_str[0] = '\0';
@@ -199,6 +167,56 @@ void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsig
 		free(total_acc);
 		free(min_max_str);
 	}
+}
+
+void handle_single_game_min_stat(stats_t stat, double accuracy)
+{
+	char *min_str = (char *)malloc(256 * sizeof(char));
+	min_str[0] = '\0';
+
+	for (unsigned long long i = stat.num_successful_hits; i <= stat.num_hits; ++i) {
+		stats_t test_stats = stat;
+		test_stats.num_successful_hits = i;
+
+		if (cmp_double(calc_game_acc(test_stats), accuracy) >= 0) {
+			unsigned long long min = i - stat.num_successful_hits;
+			sprintf(min_str, "%llu", min);
+			break;
+		}
+	}
+
+	char *game_acc = double_to_str(calc_game_acc(stat));
+	printf("%s.%s\n", game_acc, min_str);
+
+	free(game_acc);
+	free(min_str);
+}
+
+void handle_single_game_max_stat(stats_t stat, double accuracy)
+{
+	char *max_str = (char *)malloc(256 * sizeof(char));
+	max_str[0] = '\0';
+
+	for (unsigned long long i = stat.num_successful_hits - 1; ; --i) {
+		stats_t test_stats = stat;
+		test_stats.num_successful_hits = i;
+
+		if (cmp_double(calc_game_acc(test_stats), accuracy) < 0) {
+			unsigned long long max = stat.num_successful_hits - (i + 1);
+			sprintf(max_str, "%llu", max);
+			break;
+		}
+
+		if (i == 0) {
+			break;
+		}
+	}
+
+	char *game_acc = double_to_str(calc_game_acc(stat));
+	printf("%s.%s\n", game_acc, max_str);
+
+	free(game_acc);
+	free(max_str);
 }
 
 double calc_game_acc(stats_t stats)

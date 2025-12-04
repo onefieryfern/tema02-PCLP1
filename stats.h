@@ -11,6 +11,9 @@ void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsig
 double calc_game_acc(stats_t stats);
 double calc_total_acc(unsigned long long count, stats_t *stats);
 
+void handle_single_game_min_stat(stats_t stat, double accuracy);
+void handle_single_game_max_stat(stats_t stat, double accuracy);
+
 int cmp_double(double a, double b);
 char *double_to_str(double a);
 
