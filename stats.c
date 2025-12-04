@@ -199,21 +199,21 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 	}
 
 	unsigned long long found_count = 0;
-	for (unsigned long long i = 0; i < count && cmp_double(calc_total_acc(count, ordered_stats), accuracy) >= 0; ++i) {
+	for (unsigned long long i = 0; i < count; ++i) {
 		if (ordered_stats[i].num_successful_hits == 0) {
 			continue;
 		}
 
 		ordered_stats[i].num_successful_hits = 0;
-		++found_count;
+		if (cmp_double(calc_total_acc(count, ordered_stats), accuracy) >= 0) {
+			++found_count;
+		} else {
+			break;
+		}
 	}
 
 	free(ordered_stats);
 
-	if (found_count > 0) {
-		// Temporary hack
-		--found_count;
-	}
 	sprintf(min_str, "%llu", found_count);
 
 	char *total_acc = double_to_str(calc_total_acc(count, stats));
