@@ -64,14 +64,23 @@ void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsig
 		min_max_str[0] = '\0';
 
 		if (strcmp(min_max, "MIN") == 0) {
+			for (unsigned long long i = stats[game_index].num_successful_hits; i <= stats[game_index].num_hits; ++i) {
+				stats_t fake_stats = stats[game_index];
+				fake_stats.num_successful_hits = i;
 
+				if (cmp_double(calc_game_acc(fake_stats), acc) >= 0) {
+					unsigned long long min = i - stats[game_index].num_successful_hits;
+					sprintf(min_max_str, "%llu", min);
+					break;
+				}
+			}
 		} else { // strcmp(min_max, "MAX") == 0
-			for (unsigned long long i = stats->num_successful_hits - 1; ; --i) {
-				stats_t fake_stats = *stats;
+			for (unsigned long long i = stats[game_index].num_successful_hits - 1; ; --i) {
+				stats_t fake_stats = stats[game_index];
 				fake_stats.num_successful_hits = i;
 
 				if (cmp_double(calc_game_acc(fake_stats), acc) < 0) {
-					unsigned long long max = stats->num_successful_hits - (i + 1);
+					unsigned long long max = stats[game_index].num_successful_hits - (i + 1);
 					sprintf(min_max_str, "%llu", max);
 					break;
 				}
@@ -82,18 +91,113 @@ void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsig
 			}
 		}
 
-		char *game_acc = double_to_str(calc_game_acc(*stats));
+		char *game_acc = double_to_str(calc_game_acc(stats[game_index]));
 
 		printf("%s.%s\n", game_acc, min_max_str);
 
 		free(game_acc);
 		free(min_max_str);
 	} else { // num_games == 'T' // cerintele 1,3
+		char *min_max_str = (char *)malloc(256 * sizeof(char));
+		min_max_str[0] = '\0';
+
 		if (strcmp(min_max, "MIN") == 0) {
+			stats_t *ordered_stats = malloc(count * sizeof(stats_t));
+			// TODO progr def
 
+			for (unsigned long long i = 0; i < count; ++i) {
+				ordered_stats[i] = stats[i];
+			}
+
+			for (unsigned long long i = 0; i < count - 1; ++i) {
+				for (unsigned long long j = i + 1; j < count; ++j) {
+					double change1 = (double)ordered_stats[i].num_ships_per_grid - calc_game_acc(ordered_stats[i]) / 100 * (double)ordered_stats[i].num_ships_per_grid;
+					double change2 = (double)ordered_stats[j].num_ships_per_grid - calc_game_acc(ordered_stats[j]) / 100 * (double)ordered_stats[j].num_ships_per_grid;
+
+					if (cmp_double(change1, change2) < 0) {
+						stats_t tmp = ordered_stats[i];
+						ordered_stats[i] = ordered_stats[j];
+						ordered_stats[j] = tmp;
+					}
+				}
+			}
+
+			stats_t *ordered_stats_copy = malloc(count * sizeof(stats_t));
+			// TODO progr def
+
+			for (unsigned long long i = 0; i < count; ++i) {
+				ordered_stats_copy[i] = ordered_stats[i];
+			}
+
+			unsigned long long found_count = 0;
+			for (unsigned long long i = 0; i < count; ++i) {
+				if (ordered_stats[i].num_successful_hits == ordered_stats[i].num_hits) {
+					continue;
+				}
+
+				if (cmp_double(calc_total_acc(count, ordered_stats_copy), acc) >= 0) {
+					break;
+				}
+
+				ordered_stats_copy[i].num_successful_hits = ordered_stats[i].num_hits;
+				++found_count;
+			}
+
+			free(ordered_stats);
+			free(ordered_stats_copy);
+
+			sprintf(min_max_str, "%llu", found_count);
 		} else { // strcmp(min_max, "MAX") == 0
+			stats_t *ordered_stats = malloc(count * sizeof(stats_t));
+			// TODO progr def
 
+			for (unsigned long long i = 0; i < count; ++i) {
+				ordered_stats[i] = stats[i];
+			}
+
+			for (unsigned long long i = 0; i < count - 1; ++i) {
+				for (unsigned long long j = i + 1; j < count; ++j) {
+					if (cmp_double(calc_game_acc(stats[i]) * (double)stats->num_ships_per_grid, calc_game_acc(stats[j]) * (double)stats->num_ships_per_grid) > 0) {
+						stats_t tmp = ordered_stats[i];
+						ordered_stats[i] = ordered_stats[j];
+						ordered_stats[j] = tmp;
+					}
+				}
+			}
+
+			stats_t *ordered_stats_copy = malloc(count * sizeof(stats_t));
+			// TODO progr def
+
+			for (unsigned long long i = 0; i < count; ++i) {
+				ordered_stats_copy[i] = ordered_stats[i];
+			}
+
+			unsigned long long found_count = 0;
+			for (unsigned long long i = 0; i < count && cmp_double(calc_total_acc(count, ordered_stats_copy), acc) >= 0; ++i) {
+				if (ordered_stats_copy[i].num_successful_hits == 0) {
+					continue;
+				}
+
+				ordered_stats_copy[i].num_successful_hits = 0;
+				++found_count;
+			}
+
+			free(ordered_stats);
+			free(ordered_stats_copy);
+
+			if (found_count > 0) {
+				// Temporary hack
+				--found_count;
+			}
+			sprintf(min_max_str, "%llu", found_count);
 		}
+
+		char *total_acc = double_to_str(calc_total_acc(count, stats));
+
+		printf("%s.%s\n", total_acc, min_max_str);
+
+		free(total_acc);
+		free(min_max_str);
 	}
 }
 
@@ -102,6 +206,19 @@ double calc_game_acc(stats_t stats)
 	double acc = (double)stats.num_successful_hits / (double)stats.num_hits * 100;
 
 	return acc;
+}
+
+double calc_total_acc(unsigned long long count, stats_t *stats)
+{
+	double top = 0;
+	double bottom = 0;
+
+	for (unsigned long long i = 0; i < count; ++i) {
+		top += calc_game_acc(stats[i]) * (double)stats[i].num_ships_per_grid;
+		bottom += (double)stats[i].num_ships_per_grid;
+	}
+
+	return top / bottom;
 }
 
 int cmp_double(double a, double b)
@@ -128,8 +245,8 @@ int cmp_double(double a, double b)
 
 char *double_to_str(double a)
 {
-	char str[8] = "";
-	sprintf(str, "%07.3lf", a);
+	char str[16] = "";
+	sprintf(str, "%015.11lf", a);
 	str[6] = '\0';
 
 	return dup_str(str);
