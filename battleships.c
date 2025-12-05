@@ -186,39 +186,17 @@ int hit_space(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
 	if (space_to_hit->ship) {
 		*hit_ship = *space_to_hit->ship;
 
-		// Rule: if ship head is hit, the whole ship is destroyed
-		int was_ship_head_hit = 0;
+		// A ship is destroyed when its head is hit
 		if (are_coords_equal(hit_coords, hit_ship->start)) {
-			was_ship_head_hit = 1;
-
 			destroy_ship(grid, *hit_ship);
-		}
 
-		// Check if ship was destroyed as a result of the hit
-		if (was_ship_head_hit || is_ship_destroyed(grid, *hit_ship)) {
 			return HIT_DESTROY;
 		}
 
 		return HIT_SUCCESS;
-		}
-
-	return HIT_MISS;
-}
-
-int is_ship_destroyed(grid_element_t **grid, ship_t ship)
-{
-	coords_t ship_coords[MAX_SHIP_LEN];
-	get_ordered_ship_coords(ship_coords, ship);
-
-	for (size_t i = 0; i < ship.len; ++i) {
-		coords_t current_coords = ship_coords[i];
-
-		if (grid[current_coords.row][current_coords.col].space != 0) {
-			return 0;
-		}
 	}
 
-	return 1;
+	return HIT_MISS;
 }
 
 int destroy_ship(grid_element_t **grid, ship_t ship)
