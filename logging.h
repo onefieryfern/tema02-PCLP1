@@ -6,13 +6,12 @@
 
 #include "types.h"
 
-void log_hit_successful(int player_num, ship_type_t ship_type,
-						coords_t hit_coords);
-void log_hit_miss(int player_num, coords_t hit_coords);
-void log_already_hit(int player_num, coords_t hit_coords);
-void log_destroy(int player_num, ship_t hit_ship);
+void log_hit_successful(int player, ship_type_t ship_type, coords_t hit_coords);
+void log_hit_miss(int player, coords_t hit_coords);
+void log_already_hit(int player, coords_t hit_coords);
+void log_destroy(int player, ship_t hit_ship);
 
 void log_cannot_place(ship_t ship);
-void log_player_won(int player_num);
+void log_player_won(int player);
 
 #endif
