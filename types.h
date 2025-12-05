@@ -34,7 +34,7 @@ typedef struct {
 } ship_t;
 
 typedef struct {
-	unsigned short space;
+	short space;
 	ship_t *ship;
 } grid_element_t;
 

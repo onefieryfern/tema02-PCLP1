@@ -3,11 +3,9 @@
 
 #include "battleships.h"
 #include "grid.h"
+#include "stats.h"
 #include "types.h"
 #include <stdio.h>
-#include <string.h>
-
-#include "stats.h"
 
 int main(void)
 {
@@ -18,13 +16,14 @@ int main(void)
 	stats_t *player1_stats = (stats_t *)calloc(num_games, sizeof(stats_t));
 	stats_t *player2_stats = (stats_t *)calloc(num_games, sizeof(stats_t));
 
+	// Ensure memory was allocated
 	if (!player1_stats || !player2_stats) {
-		fprintf(stderr, "malloc() failed\n");
+		fprintf(stderr, "calloc() failed\n");
 
 		free(player1_stats);
 		free(player2_stats);
 
-		return 0;
+		return -1;
 	}
 
 	// Read and play num_games games
@@ -32,15 +31,14 @@ int main(void)
 		// Read game parameters
 		game_state_t game_state;
 
-		if (read_game_data(&game_state) == FAILURE) {
+		if (read_starting_grid(&game_state) == FAILURE) {
 			fprintf(stderr, "read_game_data() failed\n");
 
-			// Cleanup
 			free_game_state(game_state);
 			continue;
 		}
 
-		// Print players' grids
+		// Print players' starting grids
 		print_grid(game_state.player1.grid, game_state.rows, game_state.cols);
 		printf("\n");
 		print_grid(game_state.player2.grid, game_state.rows, game_state.cols);
@@ -52,7 +50,7 @@ int main(void)
 		free_game_state(game_state);
 	}
 
-	// Read statistics requirements and print results
+	// Read wanted statistics and print results
 	handle_stats(num_games, player1_stats, player2_stats);
 
 	// Cleanup

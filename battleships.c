@@ -9,7 +9,7 @@
 #include "types.h"
 #include <stdio.h>
 
-int read_game_data(game_state_t *game_state)
+int read_starting_grid(game_state_t *game_state)
 {
 	// Grid initialisation
 	scanf("%llu %llu", &game_state->rows, &game_state->cols);
@@ -17,6 +17,7 @@ int read_game_data(game_state_t *game_state)
 	game_state->player1.grid = alloc_grid(game_state->rows, game_state->cols);
 	game_state->player2.grid = alloc_grid(game_state->rows, game_state->cols);
 
+	// Ensure memory was allocated
 	if (!game_state->player1.grid || !game_state->player2.grid) {
 		fprintf(stderr, "alloc_grid() failed\n");
 		return FAILURE;
@@ -26,7 +27,7 @@ int read_game_data(game_state_t *game_state)
 	clear_grid(game_state->player2.grid, game_state->rows, game_state->cols);
 
 	// Read, save and place ships
-	if (handle_input_ships(game_state) == FAILURE) {
+	if (read_starting_ships(game_state) == FAILURE) {
 		fprintf(stderr, "handle_input_ships() failed\n");
 		return FAILURE;
 	}
@@ -34,28 +35,18 @@ int read_game_data(game_state_t *game_state)
 	return SUCCESS;
 }
 
-int get_other_player(int player)
+int read_starting_ships(game_state_t *game_state)
 {
-	switch (player) {
-	case 1:
-		return 2;
-	case 2:
-		return 1;
-	default:
-		return -1;
-	}
-}
-
-int handle_input_ships(game_state_t *game_state)
-{
-	unsigned long long num_ships_per_player =
+	// Ships array initialisation
+	unsigned long long num_ships_per_grid =
 		get_num_ships_for_size(game_state->rows, game_state->cols);
 
 	game_state->player1.ships =
-		(ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
+		(ship_t *)malloc(num_ships_per_grid * sizeof(ship_t));
 	game_state->player2.ships =
-		(ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
+		(ship_t *)malloc(num_ships_per_grid * sizeof(ship_t));
 
+	// Ensure memory was allocated
 	if (!game_state->player1.ships || !game_state->player2.ships) {
 		fprintf(stderr, "malloc() failed\n");
 
@@ -66,7 +57,7 @@ int handle_input_ships(game_state_t *game_state)
 	game_state->player2.num_ships = 0;
 
 	int current_player = 1;
-	for (unsigned long long i = 0; i < 2 * num_ships_per_player; ++i) {
+	for (unsigned long long i = 0; i < 2 * num_ships_per_grid; ++i) {
 		ship_t ship;
 
 		if (read_ship(&ship) == ERR_SHIP_OUT_OF_BOUNDS) {
@@ -84,7 +75,6 @@ int handle_input_ships(game_state_t *game_state)
 			current_grid = game_state->player1.grid;
 			current_ships = game_state->player1.ships;
 			current_num_ships = &game_state->player1.num_ships;
-
 		} else { // current_player == 2
 			current_grid = game_state->player2.grid;
 			current_ships = game_state->player2.ships;
@@ -103,7 +93,7 @@ int handle_input_ships(game_state_t *game_state)
 
 		(*current_num_ships)++;
 
-		current_player = get_other_player(current_player);
+		current_player = current_player == 1 ? 2 : 1;
 	}
 
 	return SUCCESS;
@@ -149,7 +139,7 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 		// Try hitting ship
 		ship_t hit_ship;
 
-		int hit_result = try_hitting(currently_attacked_grid, hit_coords,
+		int hit_result = hit_space(currently_attacked_grid, hit_coords,
 			&hit_ship);
 		current_stats->num_hits++;
 
@@ -178,15 +168,15 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 			break;
 		}
 
-		current_player = get_other_player(current_player);
+		current_player = current_player == 1 ? 2 : 1;
 	}
 }
 
-int try_hitting(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
+int hit_space(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
 {
 	grid_element_t *space_to_hit = &grid[hit_coords.row][hit_coords.col];
 
-	if (space_to_hit->space == (unsigned short)-1) {
+	if (space_to_hit->space == -1) {
 		return HIT_REPEAT;
 	}
 
@@ -239,8 +229,7 @@ int destroy_ship(grid_element_t **grid, ship_t ship)
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		if (grid[current_coords.row][current_coords.col].space !=
-			(unsigned short)-1) {
+		if (grid[current_coords.row][current_coords.col].space != -1) {
 			grid[current_coords.row][current_coords.col].space = 0;
 			grid[current_coords.row][current_coords.col].ship = NULL;
 		}
