@@ -229,9 +229,10 @@ int destroy_ship(grid_element_t **grid, ship_t ship)
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
+		grid[current_coords.row][current_coords.col].ship = NULL;
+
 		if (grid[current_coords.row][current_coords.col].space != -1) {
 			grid[current_coords.row][current_coords.col].space = 0;
-			grid[current_coords.row][current_coords.col].ship = NULL;
 		}
 	}
 
