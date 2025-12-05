@@ -11,8 +11,8 @@
 
 int main(void)
 {
-	unsigned long long num_games;
-	scanf("%llu", &num_games);
+	int num_games;
+	scanf("%d", &num_games);
 
 	// Set up statistics storage
 	stats_t *player1_stats = (stats_t *)calloc(num_games, sizeof(stats_t));
@@ -28,7 +28,7 @@ int main(void)
 	}
 
 	// Read and play num_games games
-	for (unsigned long long i = 0; i < num_games; ++i) {
+	for (int i = 0; i < num_games; ++i) {
 		// Read game parameters
 		game_state_t game_state;
 

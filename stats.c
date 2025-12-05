@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void handle_stats(unsigned long long count, stats_t *player1_stats, stats_t *player2_stats)
+void handle_stats(int count, stats_t *player1_stats, stats_t *player2_stats)
 {
 	char to_do;
 	scanf(" %c", &to_do);
@@ -35,7 +35,7 @@ void handle_stats(unsigned long long count, stats_t *player1_stats, stats_t *pla
 
 		char game_index_str[4];
 		scanf(" %3s", game_index_str);
-		unsigned short game_index = (unsigned short)(atoi(game_index_str) - 1);
+		int game_index = atoi(game_index_str) - 1;
 
 		char acc_str[7];
 		scanf(" %6s", acc_str);
@@ -52,7 +52,7 @@ void handle_stats(unsigned long long count, stats_t *player1_stats, stats_t *pla
 	} while (1);
 }
 
-void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsigned short game_index, double acc, char *min_max)
+void handle_stat(int count, stats_t *stats, char num_games, int game_index, double acc, char *min_max)
 {
 	if (num_games == 'U') {
 		if (game_index > count) {
@@ -119,7 +119,7 @@ void handle_single_game_max_stat(stats_t stat, double accuracy)
 	free(game_acc);
 }
 
-void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double accuracy)
+void handle_all_games_min_stat(int count, stats_t *stats, double accuracy)
 {
 	stats_t *ordered_stats = malloc(count * sizeof(stats_t));
 
@@ -128,12 +128,12 @@ void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double 
 		return;
 	}
 
-	for (unsigned long long i = 0; i < count; ++i) {
+	for (int i = 0; i < count; ++i) {
 		ordered_stats[i] = stats[i];
 	}
 
-	for (unsigned long long i = 0; i < count - 1; ++i) {
-		for (unsigned long long j = i + 1; j < count; ++j) {
+	for (int i = 0; i < count - 1; ++i) {
+		for (int j = i + 1; j < count; ++j) {
 			double change1 = (double)ordered_stats[i].num_ships_per_grid - calc_game_acc(ordered_stats[i]) / 100 * (double)ordered_stats[i].num_ships_per_grid;
 			double change2 = (double)ordered_stats[j].num_ships_per_grid - calc_game_acc(ordered_stats[j]) / 100 * (double)ordered_stats[j].num_ships_per_grid;
 
@@ -145,8 +145,8 @@ void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double 
 		}
 	}
 
-	unsigned long long found_count = 0;
-	for (unsigned long long i = 0; i < count; ++i) {
+	int found_count = 0;
+	for (int i = 0; i < count; ++i) {
 		if (ordered_stats[i].num_successful_hits == ordered_stats[i].num_hits) {
 			continue;
 		}
@@ -160,13 +160,13 @@ void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double 
 	}
 
 	char *total_acc = double_to_str(calc_total_acc(count, stats));
-	printf("%s.%llu\n", total_acc, found_count);
+	printf("%s.%d\n", total_acc, found_count);
 
 	free(ordered_stats);
 	free(total_acc);
 }
 
-void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double accuracy)
+void handle_all_games_max_stat(int count, stats_t *stats, double accuracy)
 {
 	stats_t *ordered_stats = malloc(count * sizeof(stats_t));
 
@@ -175,12 +175,12 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 		return;
 	}
 
-	for (unsigned long long i = 0; i < count; ++i) {
+	for (int i = 0; i < count; ++i) {
 		ordered_stats[i] = stats[i];
 	}
 
-	for (unsigned long long i = 0; i < count - 1; ++i) {
-		for (unsigned long long j = i + 1; j < count; ++j) {
+	for (int i = 0; i < count - 1; ++i) {
+		for (int j = i + 1; j < count; ++j) {
 			if (calc_game_acc(stats[i]) / 100 * (double)stats[i].num_ships_per_grid > calc_game_acc(stats[j]) / 100 * (double)stats[j].num_ships_per_grid) {
 				stats_t tmp = ordered_stats[i];
 				ordered_stats[i] = ordered_stats[j];
@@ -189,8 +189,8 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 		}
 	}
 
-	unsigned long long found_count = 0;
-	for (unsigned long long i = 0; i < count; ++i) {
+	int found_count = 0;
+	for (int i = 0; i < count; ++i) {
 		if (ordered_stats[i].num_successful_hits == 0) {
 			continue;
 		}
@@ -204,7 +204,7 @@ void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double 
 	}
 
 	char *total_acc = double_to_str(calc_total_acc(count, stats));
-	printf("%s.%llu\n", total_acc, found_count);
+	printf("%s.%d\n", total_acc, found_count);
 
 	free(ordered_stats);
 	free(total_acc);
@@ -217,12 +217,12 @@ double calc_game_acc(stats_t stats)
 	return acc;
 }
 
-double calc_total_acc(unsigned long long count, stats_t *stats)
+double calc_total_acc(int count, stats_t *stats)
 {
 	double top = 0;
 	double bottom = 0;
 
-	for (unsigned long long i = 0; i < count; ++i) {
+	for (int i = 0; i < count; ++i) {
 		top += calc_game_acc(stats[i]) * (double)stats[i].num_ships_per_grid;
 		bottom += (double)stats[i].num_ships_per_grid;
 	}

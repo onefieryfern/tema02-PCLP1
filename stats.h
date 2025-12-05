@@ -6,16 +6,16 @@
 
 #include "types.h"
 
-void handle_stats(unsigned long long count, stats_t *player1_stats, stats_t *player2_stats);
-void handle_stat(unsigned long long count, stats_t *stats, char num_games, unsigned short game_index, double acc, char *min_max);
+void handle_stats(int count, stats_t *player1_stats, stats_t *player2_stats);
+void handle_stat(int count, stats_t *stats, char num_games, int game_index, double acc, char *min_max);
 double calc_game_acc(stats_t stats);
-double calc_total_acc(unsigned long long count, stats_t *stats);
+double calc_total_acc(int count, stats_t *stats);
 
 void handle_single_game_min_stat(stats_t stat, double accuracy);
 void handle_single_game_max_stat(stats_t stat, double accuracy);
 
-void handle_all_games_min_stat(unsigned long long count, stats_t *stats, double accuracy);
-void handle_all_games_max_stat(unsigned long long count, stats_t *stats, double accuracy);
+void handle_all_games_min_stat(int count, stats_t *stats, double accuracy);
+void handle_all_games_max_stat(int count, stats_t *stats, double accuracy);
 
 int cmp_double(double a, double b);
 char *double_to_str(double a);
