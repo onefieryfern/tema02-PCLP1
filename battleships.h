@@ -14,6 +14,5 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 				   stats_t *player2_stats);
 
 int hit_space(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship);
-int destroy_ship(grid_element_t **grid, ship_t ship);
 
 #endif

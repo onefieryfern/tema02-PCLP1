@@ -185,36 +185,18 @@ int hit_space(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
 	// Mark space as hit
 	space_to_hit->space = -1;
 
-	if (space_to_hit->ship) {
-		*hit_ship = *space_to_hit->ship;
-
-		// A ship is destroyed when its head is hit
-		if (are_coords_equal(hit_coords, hit_ship->start)) {
-			destroy_ship(grid, *hit_ship);
-
-			return HIT_DESTROY;
-		}
-
-		return HIT_SUCCESS;
+	if (!space_to_hit->ship) {
+		return HIT_MISS;
 	}
 
-	return HIT_MISS;
-}
+	*hit_ship = *space_to_hit->ship;
 
-int destroy_ship(grid_element_t **grid, ship_t ship)
-{
-	coords_t ship_coords[MAX_SHIP_LEN];
-	get_ordered_ship_coords(ship_coords, ship);
+	// A ship is destroyed when its head is hit
+	if (are_coords_equal(hit_coords, hit_ship->start)) {
+		remove_ship_from_grid(grid, *hit_ship);
 
-	for (size_t i = 0; i < ship.len; ++i) {
-		coords_t current_coords = ship_coords[i];
-
-		grid[current_coords.row][current_coords.col].ship = NULL;
-
-		if (grid[current_coords.row][current_coords.col].space != -1) {
-			grid[current_coords.row][current_coords.col].space = 0;
-		}
+		return HIT_DESTROY;
 	}
 
-	return 1;
+	return HIT_SUCCESS;
 }

@@ -55,6 +55,22 @@ void add_ship_to_grid(grid_element_t **grid, ship_t *ship)
 	}
 }
 
+void remove_ship_from_grid(grid_element_t **grid, ship_t ship)
+{
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, ship);
+
+	for (size_t i = 0; i < ship.len; ++i) {
+		coords_t current_coords = ship_coords[i];
+
+		grid[current_coords.row][current_coords.col].ship = NULL;
+
+		if (grid[current_coords.row][current_coords.col].space != SPACE_HIT) {
+			grid[current_coords.row][current_coords.col].space = SPACE_EMPTY;
+		}
+	}
+}
+
 void print_grid(grid_element_t **grid, size_t rows, size_t cols)
 {
 	for (size_t i = 0; i < rows; ++i) {
