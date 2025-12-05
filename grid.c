@@ -42,24 +42,17 @@ int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols,
 	return 1;
 }
 
-int add_ship_to_grid(grid_element_t **grid, size_t rows, size_t cols,
-					 ship_t *ship)
+void add_ship_to_grid(grid_element_t **grid, ship_t *ship)
 {
-	if (!is_ship_placeable(grid, rows, cols, *ship)) {
-		return 0;
-	}
-
 	coords_t ship_coords[MAX_SHIP_LEN];
 	get_ordered_ship_coords(ship_coords, *ship);
 
 	for (size_t i = 0; i < ship->len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		grid[current_coords.row][current_coords.col].space = ship->len;
+		grid[current_coords.row][current_coords.col].space = (short)ship->len;
 		grid[current_coords.row][current_coords.col].ship = ship;
 	}
-
-	return 1;
 }
 
 void print_grid(grid_element_t **grid, size_t rows, size_t cols)

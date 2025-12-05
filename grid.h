@@ -10,8 +10,7 @@
 int is_ship_in_grid(size_t rows, size_t cols, ship_t ship);
 int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols,
 					  ship_t ship);
-int add_ship_to_grid(grid_element_t **grid, size_t rows, size_t cols,
-					 ship_t *ship);
+void add_ship_to_grid(grid_element_t **grid, ship_t *ship);
 
 void print_grid(grid_element_t **grid, size_t rows, size_t cols);
 

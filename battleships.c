@@ -83,13 +83,15 @@ int read_starting_ships(game_state_t *game_state)
 
 		current_ships[*current_num_ships] = ship;
 
-		if (!add_ship_to_grid(current_grid, game_state->rows, game_state->cols,
-							  &current_ships[*current_num_ships])) {
+		if (!is_ship_placeable(current_grid, game_state->rows, game_state->cols,
+							   current_ships[*current_num_ships])) {
 			log_cannot_place(ship);
 
 			--i;
 			continue;
 		}
+
+		add_ship_to_grid(current_grid, &current_ships[*current_num_ships]);
 
 		(*current_num_ships)++;
 
