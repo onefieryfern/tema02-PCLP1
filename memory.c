@@ -23,14 +23,16 @@ char *dup_str(const char *str)
 
 grid_element_t **alloc_grid(size_t rows, size_t cols)
 {
-	grid_element_t **arr = (grid_element_t **)malloc(rows * sizeof(grid_element_t *));
+	grid_element_t **arr =
+		(grid_element_t **)malloc(rows * sizeof(grid_element_t *));
 
 	if (!arr) {
 		fprintf(stderr, "malloc() failed\n");
 		return NULL;
 	}
 
-	grid_element_t *mem_zone = (grid_element_t *)malloc(rows * cols * sizeof(grid_element_t));
+	grid_element_t *mem_zone =
+		(grid_element_t *)malloc(rows * cols * sizeof(grid_element_t));
 
 	if (!mem_zone) {
 		fprintf(stderr, "malloc() failed\n");

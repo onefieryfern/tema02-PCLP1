@@ -51,7 +51,8 @@ int cast_to_direction_t(direction_t *direction, char direction_code)
  * Temporary comment
  *
  * ship is filled with garbage data on exit with FAILURE
- * ship is filled correctly, except for `end_coords`, on exit with ERR_SHIP_OUT_OF_BOUNDS
+ * ship is filled correctly, except for `end_coords`, on exit with
+ * ERR_SHIP_OUT_OF_BOUNDS
  */
 int read_ship(ship_t *ship)
 {

@@ -48,10 +48,13 @@ int get_other_player(int player)
 
 int handle_input_ships(game_state_t *game_state)
 {
-	unsigned long long num_ships_per_player = get_num_ships_for_size(game_state->rows, game_state->cols);
+	unsigned long long num_ships_per_player =
+		get_num_ships_for_size(game_state->rows, game_state->cols);
 
-	game_state->player1.ships = (ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
-	game_state->player2.ships = (ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
+	game_state->player1.ships =
+		(ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
+	game_state->player2.ships =
+		(ship_t *)malloc(num_ships_per_player * sizeof(ship_t));
 
 	if (!game_state->player1.ships || !game_state->player2.ships) {
 		fprintf(stderr, "malloc() failed\n");
@@ -90,7 +93,8 @@ int handle_input_ships(game_state_t *game_state)
 
 		current_ships[*current_num_ships] = ship;
 
-		if (!add_ship_to_grid(current_grid, game_state->rows, game_state->cols, &current_ships[*current_num_ships])) {
+		if (!add_ship_to_grid(current_grid, game_state->rows, game_state->cols,
+							  &current_ships[*current_num_ships])) {
 			log_cannot_place(ship);
 
 			--i;
@@ -105,11 +109,14 @@ int handle_input_ships(game_state_t *game_state)
 	return SUCCESS;
 }
 
-void play_one_game(game_state_t *game_state, stats_t *player1_stats, stats_t *player2_stats)
+void play_one_game(game_state_t *game_state, stats_t *player1_stats,
+				   stats_t *player2_stats)
 {
 	// Set up statistics
-	player1_stats->num_ships_per_grid = get_num_ships_for_size(game_state->rows, game_state->cols);
-	player2_stats->num_ships_per_grid = get_num_ships_for_size(game_state->rows, game_state->cols);
+	player1_stats->num_ships_per_grid =
+		get_num_ships_for_size(game_state->rows, game_state->cols);
+	player2_stats->num_ships_per_grid =
+		get_num_ships_for_size(game_state->rows, game_state->cols);
 
 	int current_player = 1;
 
@@ -142,7 +149,8 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats, stats_t *pl
 		// Try hitting ship
 		ship_t hit_ship;
 
-		int hit_result = try_hitting(currently_attacked_grid, hit_coords, &hit_ship);
+		int hit_result = try_hitting(currently_attacked_grid, hit_coords,
+			&hit_ship);
 		current_stats->num_hits++;
 
 		switch (hit_result) {
@@ -231,7 +239,8 @@ int destroy_ship(grid_element_t **grid, ship_t ship)
 	for (size_t i = 0; i < ship.len; ++i) {
 		coords_t current_coords = ship_coords[i];
 
-		if (grid[current_coords.row][current_coords.col].space != (unsigned short)-1) {
+		if (grid[current_coords.row][current_coords.col].space !=
+			(unsigned short)-1) {
 			grid[current_coords.row][current_coords.col].space = 0;
 			grid[current_coords.row][current_coords.col].ship = NULL;
 		}

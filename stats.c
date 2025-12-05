@@ -45,14 +45,17 @@ void handle_stats(int count, stats_t *player1_stats, stats_t *player2_stats)
 		scanf(" %3s", min_max);
 
 		if (player == 'O') {
-			handle_stat(count, player1_stats, num_games, game_index, acc, min_max);
+			handle_stat(count, player1_stats, num_games, game_index,
+						acc, min_max);
 		} else { // player == 'T'
-			handle_stat(count, player2_stats, num_games, game_index, acc, min_max);
+			handle_stat(count, player2_stats, num_games, game_index,
+						acc, min_max);
 		}
 	} while (1);
 }
 
-void handle_stat(int count, stats_t *stats, char num_games, int game_index, double acc, char *min_max)
+void handle_stat(int count, stats_t *stats, char num_games, int game_index,
+				 double acc, char *min_max)
 {
 	if (num_games == 'U') {
 		if (game_index > count) {
@@ -79,7 +82,9 @@ void handle_single_game_min_stat(stats_t stat, double accuracy)
 {
 	unsigned long long min = 0;
 
-	for (unsigned long long i = stat.num_successful_hits; i <= stat.num_hits; ++i) {
+	for (unsigned long long i = stat.num_successful_hits;
+		 i <= stat.num_hits;
+		 ++i) {
 		stats_t test_stats = stat;
 		test_stats.num_successful_hits = i;
 
@@ -134,8 +139,12 @@ void handle_all_games_min_stat(int count, stats_t *stats, double accuracy)
 
 	for (int i = 0; i < count - 1; ++i) {
 		for (int j = i + 1; j < count; ++j) {
-			double change1 = (double)ordered_stats[i].num_ships_per_grid - calc_game_acc(ordered_stats[i]) / 100 * (double)ordered_stats[i].num_ships_per_grid;
-			double change2 = (double)ordered_stats[j].num_ships_per_grid - calc_game_acc(ordered_stats[j]) / 100 * (double)ordered_stats[j].num_ships_per_grid;
+			double change1 = (double)ordered_stats[i].num_ships_per_grid
+				- calc_game_acc(ordered_stats[i]) / 100
+				* (double)ordered_stats[i].num_ships_per_grid;
+			double change2 = (double)ordered_stats[j].num_ships_per_grid
+				- calc_game_acc(ordered_stats[j]) / 100
+				* (double)ordered_stats[j].num_ships_per_grid;
 
 			if (change1 < change2) {
 				stats_t tmp = ordered_stats[i];
@@ -181,7 +190,12 @@ void handle_all_games_max_stat(int count, stats_t *stats, double accuracy)
 
 	for (int i = 0; i < count - 1; ++i) {
 		for (int j = i + 1; j < count; ++j) {
-			if (calc_game_acc(stats[i]) / 100 * (double)stats[i].num_ships_per_grid > calc_game_acc(stats[j]) / 100 * (double)stats[j].num_ships_per_grid) {
+			double change1 = calc_game_acc(stats[i]) / 100
+				* (double)stats[i].num_ships_per_grid;
+			double change2 = calc_game_acc(stats[j]) / 100
+				* (double)stats[j].num_ships_per_grid;
+
+			if (change1 > change2) {
 				stats_t tmp = ordered_stats[i];
 				ordered_stats[i] = ordered_stats[j];
 				ordered_stats[j] = tmp;
@@ -212,9 +226,7 @@ void handle_all_games_max_stat(int count, stats_t *stats, double accuracy)
 
 double calc_game_acc(stats_t stats)
 {
-	double acc = (double)stats.num_successful_hits / (double)stats.num_hits * 100;
-
-	return acc;
+	return (double)stats.num_successful_hits / (double)stats.num_hits * 100;
 }
 
 double calc_total_acc(int count, stats_t *stats)

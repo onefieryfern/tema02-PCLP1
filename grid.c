@@ -21,7 +21,8 @@ int is_ship_in_grid(size_t rows, size_t cols, ship_t ship)
 	return 1;
 }
 
-int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols, ship_t ship)
+int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols,
+					  ship_t ship)
 {
 	if (!is_ship_in_grid(rows, cols, ship)) {
 		return 0;
@@ -41,7 +42,8 @@ int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols, ship_t sh
 	return 1;
 }
 
-int add_ship_to_grid(grid_element_t **grid, size_t rows, size_t cols, ship_t *ship)
+int add_ship_to_grid(grid_element_t **grid, size_t rows, size_t cols,
+					 ship_t *ship)
 {
 	if (!is_ship_placeable(grid, rows, cols, *ship)) {
 		return 0;

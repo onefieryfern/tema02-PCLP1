@@ -7,7 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_hit_successful(int player_num, ship_type_t ship_type, coords_t hit_coords)
+void log_hit_successful(int player_num, ship_type_t ship_type,
+						coords_t hit_coords)
 {
 	char *ship_type_str = get_ship_type_str(ship_type);
 
