@@ -7,10 +7,11 @@
 #include "types.h"
 #include <stdlib.h>
 
-char *dup_str(const char *str);
-
 grid_element_t **alloc_grid(size_t rows, size_t cols);
 void free_grid(grid_element_t **grid);
+
 void clear_grid(grid_element_t **grid, size_t rows, size_t cols);
+
+char *dup_str(const char *str);
 
 #endif

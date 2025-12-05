@@ -7,26 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *dup_str(const char *str)
-{
-	size_t len = strlen(str);
-	char *new_str = (char *)malloc((len + 1) * sizeof(char));
-
-	if (!new_str) {
-		fprintf(stderr, "malloc() failed\n");
-		return NULL;
-	}
-
-	strcpy(new_str, str);
-	return new_str;
-}
-
 grid_element_t **alloc_grid(size_t rows, size_t cols)
 {
-	grid_element_t **arr =
+	grid_element_t **grid =
 		(grid_element_t **)malloc(rows * sizeof(grid_element_t *));
 
-	if (!arr) {
+	if (!grid) {
 		fprintf(stderr, "malloc() failed\n");
 		return NULL;
 	}
@@ -37,22 +23,23 @@ grid_element_t **alloc_grid(size_t rows, size_t cols)
 	if (!mem_zone) {
 		fprintf(stderr, "malloc() failed\n");
 
-		free(arr);
+		free(grid);
 		return NULL;
 	}
 
 	for (size_t i = 0; i < rows; ++i) {
-		arr[i] = mem_zone;
+		grid[i] = mem_zone;
 
 		mem_zone += cols;
 	}
 	mem_zone = NULL;
 
-	return arr;
+	return grid;
 }
 
 void free_grid(grid_element_t **grid)
 {
+	// Replicate `free()`'s behaviour
 	if (!grid) {
 		return;
 	}
@@ -71,4 +58,20 @@ void clear_grid(grid_element_t **grid, size_t rows, size_t cols)
 			grid[i][j].ship = NULL;
 		}
 	}
+}
+
+// This function replicates `dupstr()`, which is not available in C99
+// str is expected to be a null-terminated byte string
+char *dup_str(const char *str)
+{
+	size_t len = strlen(str);
+	char *new_str = (char *)malloc((len + 1) * sizeof(char));
+
+	if (!new_str) {
+		fprintf(stderr, "malloc() failed\n");
+		return NULL;
+	}
+
+	strcpy(new_str, str);
+	return new_str;
 }
