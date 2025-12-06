@@ -118,10 +118,10 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 	// Game loop
 	while (1) {
 		// Read space to hit
-		coords_t input_hit_coords;
-		scanf("%zu %zu", &input_hit_coords.row, &input_hit_coords.col);
+		coords_t hit_coords;
+		scanf("%zu %zu", &hit_coords.row, &hit_coords.col);
 
-		coords_t hit_coords = get_grid_coords(input_hit_coords);
+		hit_coords = get_grid_coords(hit_coords);
 
 		// Player selection
 		grid_element_t **currently_attacked_grid = NULL;
@@ -147,10 +147,10 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 
 		switch (hit_result) {
 		case HIT_MISS:
-			log_hit_miss(current_player, input_hit_coords);
+			log_hit_miss(current_player, hit_coords);
 			break;
 		case HIT_SUCCESS:
-			log_hit_successful(current_player, hit_ship.len, input_hit_coords);
+			log_hit_successful(current_player, hit_ship.len, hit_coords);
 
 			current_stats->num_successful_hits++;
 			break;
@@ -161,7 +161,7 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 			current_stats->num_successful_hits++;
 			break;
 		case HIT_REPEAT:
-			log_already_hit(current_player, input_hit_coords);
+			log_already_hit(current_player, hit_coords);
 		}
 
 		// Win condition
