@@ -70,14 +70,8 @@ int read_starting_ships(game_state_t *game_state)
 		ship_t *ship =
 			&current_player_data->ships[current_player_data->num_ships];
 
-		if (read_ship(ship) == ERR_SHIP_OUT_OF_BOUNDS) {
-			log_cannot_place(*ship);
-
-			--i;
-			continue;
-		}
-
-		if (!is_ship_placeable(current_player_data->grid, game_state->rows,
+		if (read_ship(ship) == ERR_SHIP_OUT_OF_BOUNDS ||
+			!is_ship_placeable(current_player_data->grid, game_state->rows,
 							   game_state->cols, *ship)) {
 			log_cannot_place(*ship);
 
