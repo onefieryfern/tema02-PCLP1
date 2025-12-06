@@ -101,8 +101,9 @@ char *get_direction_str(char direction)
 }
 
 /*
- * ship is incorrectly filled on exit with FAILURE
- * ship is filled correctly, except for `end_coords`, on exit with
+ * Reads and fills a `ship_t` struct
+ *
+ * Note: ship is filled correctly, except for `end_coords`, on exit with
  * ERR_SHIP_OUT_OF_BOUNDS
  */
 int read_ship(ship_t *ship)
