@@ -1,7 +1,117 @@
 Andrei N. FLOREA (313CA) - <andrei.florea1311@stud.acs.upb.ro>
 
-# PCLP1 - Tema 2
+# PCLP1 - Homework Assignment 2
 
 Note - this README is formatted in Markdown
 
-Work in progress
+## Implementing battleships
+
+My program's battleship logic revolves around the game grids, which store "spaces"
+and a pointer to the ship on that space (or `NULL` if there is no ship there).
+
+The space is a `short int`, and its possible values are:
+
+- `n` (with n ranging from 1 to 5) - a ship of length `n`
+- `0` (empty space)
+- `-1` (hit space / ship)
+
+The `ship_t` pointer is needed to implement the rule that a ship is destroyed
+when its head is hit (regardless of how much of the rest of the ship was hit).
+Otherwise, it is hard to find the ship head, especially if two or more ships of
+the same type are next to each other.
+
+The game grids are not used by themselves, but as part of the `player_data_t`
+struct, which stores the data needed for one game. It also stores:
+
+- the player's ships (which are pointed to by the `ship_t` pointers in the grid)
+- the number of ships for that game (needed to check the win condition)
+
+---
+
+The main loop goes like so: for each game,
+
+- read game data
+- print player's starting grids - using `print_grid()`
+- play game (reading player input)
+
+### Reading game data
+
+This is handled by `read_starting_grid()`. It allocates the grids, clears them,
+and reads the player's instructions to place the ships.
+
+Ship reading and placement is handled by `read_starting_ships()`. It allocates
+each player's ship arrays, and tries to read them from the players, one from
+player 1, then one from player 2, and so on, until all the ships have been read.
+If a player cannot place a ship at the wanted location, they are prompted for
+another ship to place.
+
+Ship reading is handled by `read_ship()`. It has two exit states:
+
+- `SUCCESS`: everything went well, the `ship_t` struct is correctly filled
+- `ERR_SHIP_OUT_OF_BOUNDS`: the ship is definitely out of bounds. The `ship_t`
+struct is still correctly filled, except for `end_coords`; this is done so that
+the calling function can correctly log that the ship placement failed. The read
+ship should then be discarded.
+
+### Reading player input and playing game
+
+This is handled by `play_one_game()`, which implements the game loop;
+alternating players until one wins:
+
+- read hit coordinates (turning them into 0-indexed coordinates, as the grids 
+used internally are 0-indexed, via `get_grid_coords` (in `types.c`))
+- hit space (via `hit_space()`), check the result and act appropriately:
+    - `HIT_MISS` is logged
+    - `HIT_SUCCESS` is logged
+    - `HIT_DESTROY` is logged, the ship pointer is removed from the grid and the
+number of ships of the hit player is decremented by 1
+    - `HIT_REPEAT` is logged
+- check if a player won the game (if so, log it and exit the loop)
+
+### Logging
+
+Logging is implemented in `logging.c`.
+
+For an easier time working with strings, I replicated `strdup()`, which is not
+available in C99, as `dup_str()` (in `memory.c`).
+
+The logging functions also have to make sure to turn the internally used coords,
+which are 0-indexed, into coords indexed from (1, 1). This is done using
+`get_output_coords()` (in `types.c`).
+
+## Implementing statistics
+
+Statistics are implemented by extending the code written for battleships.
+Helper functions are found in `stats.c`.
+
+Statistics for one game are stored using a `stats_t` struct. To store the stats
+for all games, a `stats_t` array is allocated in `main()`.
+
+The main function for handling statistics is `read_and_handle_stats()`. It reads
+all the wanted statistics and outputs the computed values for each of them
+(via `handle_stat()`). It stops upon reading `Q`.
+
+To be able to accurately display floating point numbers, I wrote
+`double_to_str()`, which prints (into a string) the provided number with 15
+significant digits (the least required by the C standard to be accurately
+represented by a `double`) to have as little rounding as possible when
+truncating to 2 digits after the `.`.
+
+Encrypted statistics have not been implemented due to lack of time on my part.
+
+## My thoughts about this assignment
+
+I think that this assignment would've been much more enjoyable if the first task
+were easier to implement, but the extra rule (over the typical battleships game)
+of "a ship is destroyed when its head is hit" made that more difficult (but did
+force us to learn how to implement that efficiently). The same can be said for
+the second task, I found it a bit maths-intensive. I cannot extend the same
+criticism to the third task, encryption is inherently maths-intensive.
+
+I think that the memory and time constraints imposed for this assignment were
+not really in line with the course's philosophy of "memory or time efficiency is
+not expected". I understand the technical motives for them, but I think the
+actual values for the limits could've been better communicated.
+
+Overall, the assignment was fun, I learnt a lot while solving it and I really
+liked the idea of implementing a game.
