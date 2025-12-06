@@ -25,14 +25,9 @@ typedef struct {
 	size_t col;
 } coords_t;
 
-typedef enum {
-	vertical,
-	horizontal
-} direction_t;
-
 typedef struct {
 	short len;
-	direction_t dir;
+	char dir;
 
 	coords_t start;
 	coords_t end;
@@ -71,8 +66,7 @@ int are_coords_equal(coords_t a, coords_t b);
 short get_ship_len_from_type(char ship_type_code);
 char *get_ship_type_str(int len);
 
-int cast_to_direction_t(direction_t *direction, char direction_code);
-char *get_direction_str(direction_t direction);
+char *get_direction_str(char direction);
 
 int read_ship(ship_t *ship);
 int calc_and_set_ship_end_coords(ship_t *ship);

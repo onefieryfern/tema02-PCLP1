@@ -77,31 +77,15 @@ char *get_ship_type_str(int len)
 	return ship_type_str;
 }
 
-int cast_to_direction_t(direction_t *direction, char direction_code)
-{
-	switch (direction_code) {
-	case 'H':
-		*direction = horizontal;
-		return SUCCESS;
-	case 'V':
-		*direction = vertical;
-		return SUCCESS;
-	default:
-		fprintf(stderr, "Unknown direction %c.\n", direction_code);
-	}
-
-	return FAILURE;
-}
-
-char *get_direction_str(direction_t direction)
+char *get_direction_str(char direction)
 {
 	char *direction_str = NULL;
 
 	switch (direction) {
-	case vertical:
+	case 'V':
 		direction_str = dup_str("vertical");
 		break;
-	case horizontal:
+	case 'H':
 		direction_str = dup_str("orizontal");
 		break;
 	}
@@ -134,12 +118,7 @@ int read_ship(ship_t *ship)
 	ship->len = get_ship_len_from_type(ship_type_code);
 
 	// Set ship direction
-	direction_t direction;
-	if (cast_to_direction_t(&direction, direction_code) == FAILURE) {
-		return FAILURE;
-	}
-
-	ship->dir = direction;
+	ship->dir = direction_code;
 
 	// The grid starts at (0, 0), but the read coordinates
 	// are indexed from (1, 1)
@@ -155,7 +134,7 @@ int read_ship(ship_t *ship)
 
 int calc_and_set_ship_end_coords(ship_t *ship)
 {
-	if (ship->dir == vertical) {
+	if (ship->dir == 'V') {
 		coords_t grid_start = { 0, 0 };
 		size_t max_vertical_len = (ship->start.row - grid_start.row) + 1;
 
@@ -168,7 +147,7 @@ int calc_and_set_ship_end_coords(ship_t *ship)
 		ship->end.row = ship->start.row - (ship->len - 1);
 
 		ship->end.col = ship->start.col;
-	} else { // ship->dir == horizontal
+	} else { // ship->dir == 'H'
 		ship->end.row = ship->start.row;
 
 		// Horizontal ships' start is at their left,
@@ -183,7 +162,7 @@ void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship)
 {
 	size_t list_len = 0;
 
-	if (ship.dir == vertical) {
+	if (ship.dir == 'V') {
 		for (size_t i = ship.start.row; i >= ship.end.row; --i) {
 			coords_list[list_len].row = i;
 			coords_list[list_len].col = ship.start.col;
@@ -194,7 +173,7 @@ void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship)
 				break;
 			}
 		}
-	} else { // ship.dir == horizontal
+	} else { // ship.dir == 'H'
 		for (size_t i = ship.start.col; i <= ship.end.col; ++i) {
 			coords_list[list_len].row = ship.start.row;
 			coords_list[list_len].col = i;
