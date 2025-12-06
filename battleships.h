@@ -13,8 +13,8 @@
 #define HIT_REPEAT 3
 
 int read_starting_grid(game_state_t *game_state);
-
 int read_starting_ships(game_state_t *game_state);
+
 void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 				   stats_t *player2_stats);
 

@@ -53,48 +53,42 @@ int read_starting_ships(game_state_t *game_state)
 		return FAILURE;
 	}
 
+	// Read ships
 	game_state->player1.num_ships = 0;
 	game_state->player2.num_ships = 0;
 
 	int current_player = 1;
 	for (unsigned long long i = 0; i < 2 * num_ships_per_grid; ++i) {
-		ship_t ship;
-
-		if (read_ship(&ship) == ERR_SHIP_OUT_OF_BOUNDS) {
-			log_cannot_place(ship);
-
-			--i;
-			continue;
-		}
-
-		grid_element_t **current_grid = NULL;
-		ship_t *current_ships = NULL;
-		unsigned long long *current_num_ships = NULL;
+		player_data_t *current_player_data = NULL;
 
 		if (current_player == 1) {
-			current_grid = game_state->player1.grid;
-			current_ships = game_state->player1.ships;
-			current_num_ships = &game_state->player1.num_ships;
+			current_player_data = &game_state->player1;
 		} else { // current_player == 2
-			current_grid = game_state->player2.grid;
-			current_ships = game_state->player2.ships;
-			current_num_ships = &game_state->player2.num_ships;
+			current_player_data = &game_state->player2;
 		}
 
-		current_ships[*current_num_ships] = ship;
+		ship_t *ship =
+			&current_player_data->ships[current_player_data->num_ships];
 
-		if (!is_ship_placeable(current_grid, game_state->rows, game_state->cols,
-							   current_ships[*current_num_ships])) {
-			log_cannot_place(ship);
+		if (read_ship(ship) == ERR_SHIP_OUT_OF_BOUNDS) {
+			log_cannot_place(*ship);
 
 			--i;
 			continue;
 		}
 
-		add_ship_to_grid(current_grid, &current_ships[*current_num_ships]);
+		if (!is_ship_placeable(current_player_data->grid, game_state->rows,
+							   game_state->cols, *ship)) {
+			log_cannot_place(*ship);
 
-		(*current_num_ships)++;
+			--i;
+			continue;
+		}
 
+		add_ship_to_grid(current_player_data->grid, ship);
+		current_player_data->num_ships++;
+
+		// The player changes only upon successful ship placement
 		current_player = current_player == 1 ? 2 : 1;
 	}
 
@@ -110,12 +104,9 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 	player2_stats->num_ships_per_grid =
 		get_num_ships_for_size(game_state->rows, game_state->cols);
 
+	// Game loop
 	int current_player = 1;
 
-	unsigned long long *num_ships_left_player1 = &game_state->player1.num_ships;
-	unsigned long long *num_ships_left_player2 = &game_state->player2.num_ships;
-
-	// Game loop
 	while (1) {
 		// Read space to hit
 		coords_t hit_coords;
@@ -124,26 +115,23 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 		hit_coords = get_grid_coords(hit_coords);
 
 		// Player selection
-		grid_element_t **currently_attacked_grid = NULL;
-		unsigned long long *num_ships_currently_attacked = NULL;
-		stats_t *current_stats = NULL;
+		player_data_t *attacked_player_data = NULL;
+		stats_t *attacking_player_stats = NULL;
 
 		if (current_player == 1) {
-			currently_attacked_grid = game_state->player2.grid;
-			num_ships_currently_attacked = num_ships_left_player2;
-			current_stats = player1_stats;
+			attacked_player_data = &game_state->player2;
+			attacking_player_stats = player1_stats;
 		} else { // current_player == 2
-			currently_attacked_grid = game_state->player1.grid;
-			num_ships_currently_attacked = num_ships_left_player1;
-			current_stats = player2_stats;
+			attacked_player_data = &game_state->player1;
+			attacking_player_stats = player2_stats;
 		}
 
 		// Try hitting ship
 		ship_t hit_ship;
 
-		int hit_result = hit_space(currently_attacked_grid, hit_coords,
-			&hit_ship);
-		current_stats->num_hits++;
+		int hit_result = hit_space(attacked_player_data->grid, hit_coords,
+								   &hit_ship);
+		attacking_player_stats->num_hits++;
 
 		switch (hit_result) {
 		case HIT_MISS:
@@ -152,20 +140,21 @@ void play_one_game(game_state_t *game_state, stats_t *player1_stats,
 		case HIT_SUCCESS:
 			log_hit_successful(current_player, hit_ship.len, hit_coords);
 
-			current_stats->num_successful_hits++;
+			attacking_player_stats->num_successful_hits++;
 			break;
 		case HIT_DESTROY:
 			log_destroy(current_player, hit_ship);
-			(*num_ships_currently_attacked)--;
+			attacked_player_data->num_ships--;
 
-			current_stats->num_successful_hits++;
+			attacking_player_stats->num_successful_hits++;
 			break;
 		case HIT_REPEAT:
 			log_already_hit(current_player, hit_coords);
 		}
 
 		// Win condition
-		if (*num_ships_left_player1 == 0 || *num_ships_left_player2 == 0) {
+		if (game_state->player1.num_ships == 0 ||
+			game_state->player2.num_ships == 0) {
 			log_player_won(current_player);
 			break;
 		}
@@ -178,12 +167,12 @@ int hit_space(grid_element_t **grid, coords_t hit_coords, ship_t *hit_ship)
 {
 	grid_element_t *space_to_hit = &grid[hit_coords.row][hit_coords.col];
 
-	if (space_to_hit->space == -1) {
+	if (space_to_hit->space == SPACE_HIT) {
 		return HIT_REPEAT;
 	}
 
 	// Mark space as hit
-	space_to_hit->space = -1;
+	space_to_hit->space = SPACE_HIT;
 
 	if (!space_to_hit->ship) {
 		return HIT_MISS;
