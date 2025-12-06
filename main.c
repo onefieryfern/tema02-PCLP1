@@ -2,7 +2,9 @@
 // andrei.florea1311@stud.acs.upb.ro
 
 #include "battleships.h"
+#include "consts.h"
 #include "grid.h"
+#include "memory.h"
 #include "stats.h"
 #include "types.h"
 #include <stdio.h>

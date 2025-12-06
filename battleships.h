@@ -5,7 +5,12 @@
 #define BATTLESHIPS_H
 
 #include "types.h"
-#include <stdlib.h>
+
+// Function exit codes
+#define HIT_MISS 0
+#define HIT_SUCCESS 1
+#define HIT_DESTROY 2
+#define HIT_REPEAT 3
 
 int read_starting_grid(game_state_t *game_state);
 

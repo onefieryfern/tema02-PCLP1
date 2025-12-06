@@ -4,8 +4,21 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include "consts.h"
 #include <stdlib.h>
+
+// Ship properties
+#define NUM_SHIP_TYPES 5
+#define MAX_SHIP_LEN 5
+
+// Ship lengths
+#define ALBACORE_LEN 1
+#define LAFFEY_LEN 2
+#define BELFAST_LEN 3
+#define YAMATO_LEN 4
+#define SHINANO_LEN 5
+
+// Function exit codes
+#define ERR_SHIP_OUT_OF_BOUNDS -1
 
 typedef struct {
 	size_t row;
@@ -16,14 +29,6 @@ typedef enum {
 	vertical,
 	horizontal
 } direction_t;
-
-typedef enum {
-	albacore = 1,
-	laffey = 2,
-	belfast = 3,
-	yamato = 4,
-	shinano = 5
-} ship_type_t;
 
 typedef struct {
 	short len;
@@ -59,23 +64,19 @@ typedef struct {
 	unsigned long long num_ships_per_grid;
 } stats_t;
 
-int cast_to_ship_type_t(ship_type_t *ship_type, char ship_type_code);
+coords_t get_grid_coords(coords_t coords);
+coords_t get_output_coords(coords_t coords);
+int are_coords_equal(coords_t a, coords_t b);
+
+short get_ship_len_from_type(char ship_type_code);
+char *get_ship_type_str(int len);
+
 int cast_to_direction_t(direction_t *direction, char direction_code);
+char *get_direction_str(direction_t direction);
 
 int read_ship(ship_t *ship);
 int calc_and_set_ship_end_coords(ship_t *ship);
 
-coords_t get_grid_coords(coords_t coords);
-coords_t get_output_coords(coords_t coords);
-
-int are_coords_equal(coords_t a, coords_t b);
-
 void get_ordered_ship_coords(coords_t coords_list[MAX_SHIP_LEN], ship_t ship);
-
-char *get_ship_type_str(ship_type_t ship_type);
-char *get_direction_str(direction_t direction);
-
-void free_player_data(player_data_t player_data);
-void free_game_state(game_state_t game_state);
 
 #endif

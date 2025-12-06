@@ -14,4 +14,7 @@ void clear_grid(grid_element_t **grid, size_t rows, size_t cols);
 
 char *dup_str(const char *str);
 
+void free_player_data(player_data_t player_data);
+void free_game_state(game_state_t game_state);
+
 #endif

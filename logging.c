@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_hit_successful(int player, ship_type_t ship_type, coords_t hit_coords)
+void log_hit_successful(int player, short ship_len, coords_t hit_coords)
 {
-	char *ship_type_str = get_ship_type_str(ship_type);
+	char *ship_type_str = get_ship_type_str(ship_len);
 
 	if (!ship_type_str) {
 		fprintf(stderr, "get_ship_type_str() failed\n");
