@@ -6,13 +6,17 @@
 
 #include "types.h"
 
+#define GAME_INDEX_MAX_LEN 3
+#define ACCURACY_MAX_LEN 6
+#define MIN_MAX_LEN 3
+
 void read_and_handle_stats(int count, stats_t *player1_stats,
 						   stats_t *player2_stats);
 void handle_stat(int count, stats_t *stats, char num_games, int game_index,
 				 double accuracy, char *min_or_max);
 
-double calc_game_acc(stats_t stats);
-double calc_total_acc(int count, stats_t *stats);
+double calc_game_accuracy(stats_t stats);
+double calc_total_accuracy(int count, stats_t *stats);
 
 void handle_single_game_min_stat(stats_t stat, double accuracy);
 void handle_single_game_max_stat(stats_t stat, double accuracy);
