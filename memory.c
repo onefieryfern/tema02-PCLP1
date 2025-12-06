@@ -60,7 +60,7 @@ void clear_grid(grid_element_t **grid, size_t rows, size_t cols)
 	}
 }
 
-// This function replicates `dupstr()`, which is not available in C99
+// This function replicates `strdup()`, which is not available in C99
 // str is expected to be a null-terminated byte string
 char *dup_str(const char *str)
 {
