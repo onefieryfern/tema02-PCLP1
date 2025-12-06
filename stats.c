@@ -192,9 +192,9 @@ void handle_all_games_max_stat(int count, stats_t *stats, double accuracy)
 	for (int i = 0; i < count - 1; ++i) {
 		for (int j = i + 1; j < count; ++j) {
 			double diff_to_0_i = calc_game_acc(stats[i]) / 100
-				* (double)stats[i].num_ships_per_grid;
+				* (double)ordered_stats[i].num_ships_per_grid;
 			double diff_to_0_j = calc_game_acc(stats[j]) / 100
-				* (double)stats[j].num_ships_per_grid;
+				* (double)ordered_stats[j].num_ships_per_grid;
 
 			if (diff_to_0_i > diff_to_0_j) {
 				stats_t tmp = ordered_stats[i];
