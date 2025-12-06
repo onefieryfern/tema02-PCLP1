@@ -6,6 +6,7 @@
 #include "memory.h"
 #include <stdio.h>
 
+// The game grid used internally is 0-indexed
 coords_t get_grid_coords(coords_t coords)
 {
 	coords.row--;
@@ -14,6 +15,7 @@ coords_t get_grid_coords(coords_t coords)
 	return coords;
 }
 
+// The coords outputted are expected to be indexed from (1, 1)
 coords_t get_output_coords(coords_t coords)
 {
 	coords.row++;
@@ -129,7 +131,7 @@ int read_ship(ship_t *ship)
 		return ERR_SHIP_OUT_OF_BOUNDS;
 	}
 
-	return 1;
+	return SUCCESS;
 }
 
 int calc_and_set_ship_end_coords(ship_t *ship)
