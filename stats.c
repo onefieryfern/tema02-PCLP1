@@ -88,7 +88,7 @@ void handle_single_game_min_stat(stats_t stat, double accuracy)
 		stats_t test_stats = stat;
 		test_stats.num_successful_hits = i;
 
-		if (cmp_double(calc_game_acc(test_stats), accuracy) >= 0) {
+		if (calc_game_acc(test_stats) >= accuracy) {
 			min = i - stat.num_successful_hits;
 			break;
 		}
@@ -160,7 +160,7 @@ void handle_all_games_min_stat(int count, stats_t *stats, double accuracy)
 			continue;
 		}
 
-		if (cmp_double(calc_total_acc(count, ordered_stats), accuracy) >= 0) {
+		if (calc_total_acc(count, ordered_stats) >= accuracy) {
 			break;
 		}
 
@@ -210,7 +210,7 @@ void handle_all_games_max_stat(int count, stats_t *stats, double accuracy)
 		}
 
 		ordered_stats[i].num_successful_hits = 0;
-		if (cmp_double(calc_total_acc(count, ordered_stats), accuracy) >= 0) {
+		if (calc_total_acc(count, ordered_stats) >= accuracy) {
 			++found_count;
 		} else {
 			break;
@@ -240,29 +240,6 @@ double calc_total_acc(int count, stats_t *stats)
 	}
 
 	return top / bottom;
-}
-
-int cmp_double(double a, double b)
-{
-	int result;
-
-	char *a_str = double_to_str(a);
-	char *b_str = double_to_str(b);
-
-	if (strcmp(a_str, b_str) == 0) {
-		result = 0;
-	}
-
-	if (a > b) {
-		result = 1;
-	} else { // a < b
-		result = -1;
-	}
-
-	free(a_str);
-	free(b_str);
-
-	return result;
 }
 
 char *double_to_str(double a)

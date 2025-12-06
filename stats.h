@@ -18,7 +18,6 @@ void handle_single_game_max_stat(stats_t stat, double accuracy);
 void handle_all_games_min_stat(int count, stats_t *stats, double accuracy);
 void handle_all_games_max_stat(int count, stats_t *stats, double accuracy);
 
-int cmp_double(double a, double b);
 char *double_to_str(double a);
 
 #endif
