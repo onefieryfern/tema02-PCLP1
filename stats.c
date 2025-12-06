@@ -206,11 +206,6 @@ void handle_all_games_max_stat(int count, stats_t *stats, double accuracy)
 
 	int found_count = 0;
 	for (int i = 0; i < count; ++i) {
-		// Ignore stats that are already at 0%
-		if (ordered_stats[i].num_successful_hits == 0) {
-			continue;
-		}
-
 		ordered_stats[i].num_successful_hits = 0;
 		if (calc_total_acc(count, ordered_stats) >= accuracy) {
 			++found_count;
