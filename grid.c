@@ -2,9 +2,38 @@
 // andrei.florea1311@stud.acs.upb.ro
 
 #include "grid.h"
-#include "memory.h"
 #include "types.h"
 #include <stdio.h>
+
+// ship's coords are expected to be in grid
+void add_ship_to_grid(grid_element_t **grid, ship_t *ship)
+{
+	if (!ship) {
+		return;
+	}
+
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, *ship);
+
+	for (int i = 0; i < ship->len; ++i) {
+		grid[ship_coords[i].row][ship_coords[i].col].space = ship->len;
+		grid[ship_coords[i].row][ship_coords[i].col].ship = ship;
+	}
+}
+
+void remove_ship_from_grid(grid_element_t **grid, ship_t ship)
+{
+	coords_t ship_coords[MAX_SHIP_LEN];
+	get_ordered_ship_coords(ship_coords, ship);
+
+	for (int i = 0; i < ship.len; ++i) {
+		grid[ship_coords[i].row][ship_coords[i].col].ship = NULL;
+
+		if (grid[ship_coords[i].row][ship_coords[i].col].space != SPACE_HIT) {
+			grid[ship_coords[i].row][ship_coords[i].col].space = SPACE_EMPTY;
+		}
+	}
+}
 
 int is_ship_in_grid(size_t rows, size_t cols, ship_t ship)
 {
@@ -31,44 +60,13 @@ int is_ship_placeable(grid_element_t **grid, size_t rows, size_t cols,
 	coords_t ship_coords[MAX_SHIP_LEN];
 	get_ordered_ship_coords(ship_coords, ship);
 
-	for (size_t i = 0; i < ship.len; ++i) {
-		coords_t current_coords = ship_coords[i];
-
-		if (grid[current_coords.row][current_coords.col].space != 0) {
+	for (int i = 0; i < ship.len; ++i) {
+		if (grid[ship_coords[i].row][ship_coords[i].col].space != SPACE_EMPTY) {
 			return 0;
 		}
 	}
 
 	return 1;
-}
-
-void add_ship_to_grid(grid_element_t **grid, ship_t *ship)
-{
-	coords_t ship_coords[MAX_SHIP_LEN];
-	get_ordered_ship_coords(ship_coords, *ship);
-
-	for (size_t i = 0; i < ship->len; ++i) {
-		coords_t current_coords = ship_coords[i];
-
-		grid[current_coords.row][current_coords.col].space = (short)ship->len;
-		grid[current_coords.row][current_coords.col].ship = ship;
-	}
-}
-
-void remove_ship_from_grid(grid_element_t **grid, ship_t ship)
-{
-	coords_t ship_coords[MAX_SHIP_LEN];
-	get_ordered_ship_coords(ship_coords, ship);
-
-	for (size_t i = 0; i < ship.len; ++i) {
-		coords_t current_coords = ship_coords[i];
-
-		grid[current_coords.row][current_coords.col].ship = NULL;
-
-		if (grid[current_coords.row][current_coords.col].space != SPACE_HIT) {
-			grid[current_coords.row][current_coords.col].space = SPACE_EMPTY;
-		}
-	}
 }
 
 void print_grid(grid_element_t **grid, size_t rows, size_t cols)

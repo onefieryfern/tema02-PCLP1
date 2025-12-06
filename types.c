@@ -99,7 +99,7 @@ int calc_and_set_ship_end_coords(ship_t *ship)
 		coords_t grid_start = { 0, 0 };
 		size_t max_vertical_len = (ship->start.row - grid_start.row) + 1;
 
-		if (ship->len > max_vertical_len) {
+		if ((unsigned short)ship->len > max_vertical_len) {
 			return ERR_SHIP_OUT_OF_BOUNDS;
 		}
 

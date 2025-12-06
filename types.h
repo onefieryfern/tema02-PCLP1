@@ -26,7 +26,7 @@ typedef enum {
 } ship_type_t;
 
 typedef struct {
-	unsigned short len;
+	short len;
 	direction_t dir;
 
 	coords_t start;
