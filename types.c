@@ -40,7 +40,6 @@ short get_ship_len_from_type(char ship_type_code)
 		return YAMATO_LEN;
 	case 'S':
 		return SHINANO_LEN;
-	default:
 	}
 
 	return 0;
