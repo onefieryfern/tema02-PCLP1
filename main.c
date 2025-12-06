@@ -53,7 +53,7 @@ int main(void)
 	}
 
 	// Read wanted statistics and print results
-	handle_stats(num_games, player1_stats, player2_stats);
+	read_and_handle_stats(num_games, player1_stats, player2_stats);
 
 	// Cleanup
 	free(player1_stats);

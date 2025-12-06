@@ -6,9 +6,11 @@
 
 #include "types.h"
 
-void handle_stats(int count, stats_t *player1_stats, stats_t *player2_stats);
+void read_and_handle_stats(int count, stats_t *player1_stats,
+						   stats_t *player2_stats);
 void handle_stat(int count, stats_t *stats, char num_games, int game_index,
-				 double acc, char *min_max);
+				 double accuracy, char *min_or_max);
+
 double calc_game_acc(stats_t stats);
 double calc_total_acc(int count, stats_t *stats);
 
